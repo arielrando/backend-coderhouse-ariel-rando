@@ -42,6 +42,9 @@ class Usuario {
 
 }
 
+
+
+
 const usuario = new Usuario('mario','alvarez',['mulato','reboltoso']);
 
 usuario.getFullName();
