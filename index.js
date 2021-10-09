@@ -1,58 +1,24 @@
-class Usuario {
-    constructor(nombre,apellido,mascotas,libros){
-        this.nombre = nombre;
-        this.apellido = apellido;
-        if(!mascotas){
-            this.mascotas = [];
-        }else{
-            this.mascotas = mascotas;
-        }
-        if(!libros){
-            this.libros = [];
-        }else{
-            this.libros = libros;
-        }
-        
+const productos = require('./clases/Productos.js');
+
+const prod = new productos();
+
+(async() => {
+    let todos = await prod.getAll();
+    if(todos){
+        console.log(todos);
+    }else{
+        console.log('no hay productos')
     }
-
-    getFullName() {
-        console.log(`Su nombre y apellido son ${this.nombre} ${this.apellido}`);
+    console.log('----------------------------------------------------------------------------------------');
+    let nuevo = await prod.save({title:'producto nuevo',price:1000,thumbnail:'https://st4.depositphotos.com/14953852/24787/v/600/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg'});
+    console.log('nuevo registro guardado con el id',nuevo);
+    console.log('----------------------------------------------------------------------------------------');
+    let buscado = await prod.getById(2);
+    console.log(buscado);
+    console.log('----------------------------------------------------------------------------------------');
+    await prod.deleteById(4);
+    console.log('----------------------------------------------------------------------------------------');
+    if(todos.length>10){
+        await prod.deleteAll();
     }
-
-    addMascota(nombreMascota){
-        this.mascotas.push(nombreMascota);
-    }
-
-    countMascotas(){
-        console.log(this.mascotas.length);
-    }
-
-    addBook(nombreLibro, autorLibro){
-        this.libros.push({nombre:nombreLibro,autor:autorLibro});
-    }
-
-    getBooks(){
-        let nombresLibros = [];
-        this.libros.forEach(function(val){
-            nombresLibros.push(val.nombre);
-        } )
-        console.log(nombresLibros);
-    }
-
-
-}
-
-
-
-
-const usuario = new Usuario('mario','alvarez',['mulato','reboltoso']);
-
-usuario.getFullName();
-console.log('--------------------------------');
-usuario.addMascota('tepotepo');
-usuario.addMascota('mutante');
-usuario.countMascotas();
-console.log('--------------------------------');
-usuario.addBook('El señor de los anillos','J.R.R. Tolkien');
-usuario.addBook('100 años de soledad','Gabriel García Márquez');
-usuario.getBooks();
+  })();
