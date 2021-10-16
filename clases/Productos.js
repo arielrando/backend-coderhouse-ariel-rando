@@ -19,7 +19,7 @@ module.exports = class Productos {
         try{
             let test = await this.manejoArchivosAux.obtenerArchivoJson('productos.txt');
             if(test){
-                producto.id  = test.length+1;
+                producto.id  = test[test.length-1].id+1;
                 test.push(producto);
                 
             }else{
@@ -56,7 +56,7 @@ module.exports = class Productos {
 
             test.forEach(function (element, index) {
                 if(element.id==num){
-                    test[index]='';
+                    test.splice(index, 1);
                     console.log('entrada borrada');
                 }
             });

@@ -26,7 +26,7 @@ app.get('/productos',(peticion, respuesta) => {
         let todos = await prod.getAll();
         if(todos){
             var string = todos.map(function(obj){
-                return `<li> Nombre: ${obj.title}, Precio: ${obj.price}, Thumbnail: ${obj.thumbnail} </li>`
+                return `<li>ID:${obj.id}, Nombre: ${obj.title}, Precio: ${obj.price}, Thumbnail: ${obj.thumbnail} </li>`
             }).join('</br>');
             respuesta.send(`<a href="/">Volver</a></br></br><ul>${string}</ul>`);
         }else{
@@ -41,7 +41,7 @@ app.get('/productoRandom',(peticion, respuesta) => {
         let item = todos[Math.floor(Math.random()*todos.length)];
         
         if(item){
-            let itemFormateado = `<li> Nombre: ${item.title}, Precio: ${item.price}, Thumbnail: ${item.thumbnail} </li>`;
+            let itemFormateado = `<li>ID:${item.id}, Nombre: ${item.title}, Precio: ${item.price}, Thumbnail: ${item.thumbnail} </li>`;
             respuesta.send(`<a href="/">Volver</a></br></br><ul>${itemFormateado}</ul>`);
         }else{
             respuesta.send('<a href="/">Volver</a></br></br>no se encontraron productos');
@@ -58,7 +58,7 @@ app.get('/producto',(peticion, respuesta) => {
         (async() => {
             let buscado = await prod.getById(id);
             if(buscado){
-                let itemFormateado = `<li> Nombre: ${buscado.title}, Precio: ${buscado.price}, Thumbnail: ${buscado.thumbnail} </li>`;
+                let itemFormateado = `<li>ID:${buscado.id}, Nombre: ${buscado.title}, Precio: ${buscado.price}, Thumbnail: ${buscado.thumbnail} </li>`;
                 respuesta.send(`<a href="/">Volver</a></br></br><ul>${itemFormateado}</ul>`);
             }else{
                 respuesta.send(`<a href="/">Volver</a></br></br>no se encontro dicho producto`);
