@@ -26,7 +26,7 @@ module.exports = class Productos {
                 producto.id = 1
                 test = [producto];
             }
-            this.manejoArchivosAux.grabarArchivoJson('productos.txt',test);
+            await this.manejoArchivosAux.grabarArchivoJson('productos.txt',test);
             return producto.id;
         }catch(err){
             console.log('No se pudo grabar el archivo de los productos ',archivo,': ',err);
@@ -37,11 +37,13 @@ module.exports = class Productos {
         try{
             let test = await this.manejoArchivosAux.obtenerArchivoJson('productos.txt');
             let result = null;
-            test.forEach(element => {
-                if(element.id==num){
-                    result = element;
-                }
-            });
+            if(test){
+                test.forEach(element => {
+                    if(element.id==num){
+                        result = element;
+                    }
+                });
+            }
             return result;
         }catch(err){
             console.log('No se pudo buscar el producto ',num,': ',err);
@@ -58,15 +60,14 @@ module.exports = class Productos {
                     console.log('entrada borrada');
                 }
             });
-            this.manejoArchivosAux.grabarArchivoJson('productos.txt',test);
+            await this.manejoArchivosAux.grabarArchivoJson('productos.txt',test);
         }catch(err){
             console.log('No se pudo borrar el producto ',num,': ',err);
         }
     }
 
     async deleteAll(){
-        this.manejoArchivosAux.grabarArchivo('productos.txt',``);
-        console.log('Entradas borradas');
+        await this.manejoArchivosAux.grabarArchivo('productos.txt',``);
     }
 }
 
