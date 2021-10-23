@@ -2,6 +2,11 @@ const express = require('express');
 
 const app = express();
 
+const {Router} = express;
+
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
 const PORT = 8080;
 
 const productos = require('./clases/Productos.js');
@@ -17,7 +22,14 @@ app.get('/',(peticion, respuesta) => {
     <h3><a href="/agregarProducto?nombre=xxxxx&precio=N">/agregarProducto?nombre=xxxxx&precio=N</a> agrega un prducto seteando el parametro nombre y precio en la url</h3>
     <h3><a href="/eliminarProducto?id=N">/eliminarProducto?id=N</a> elimina un producto especifico mandando su ID</h3>
     <h3><a href="/eliminarTodos">/eliminarTodos</a> elimina todos los productos</h3>
-    <h3><a href="/productosReset">/productosReset</a> setea los productos originales</h3>`);
+    <h3><a href="/productosReset">/productosReset</a> setea los productos originales</h3>
+    <h2>API</h2>
+    <h3>GET '/api/productos' -> devuelve todos los productos.</h3>
+    <h3>GET '/api/productos/:id' -> devuelve un producto según su id.</h3>
+    <h3>POST '/api/productos' -> recibe y agrega un producto, y lo devuelve con su id asignado.</h3>
+    <h3>PUT '/api/productos/:id' -> recibe y actualiza un producto según su id.</h3>
+    <h3>DELETE '/api/productos/:id' -> elimina un producto según su id.</h3>
+    <h3><a href="/index.html">/index.html</a> Cargar productos por Form por medio de POST</h3>`);
 })
 
 app.get('/productos',(peticion, respuesta) => {
@@ -129,6 +141,77 @@ app.get('/productosReset',(peticion, respuesta) => {
         respuesta.send(`<a href="/">Volver</a></br></br>Se resetearon los productos a los defaults`);
       })();
 })
+
+
+
+const apiProductos = new Router();
+
+apiProductos.get('/',(req, res)=>{
+    console.log('test');
+    (async() => {
+        let todos = await prod.getAll();
+        if(todos){
+            res.send(JSON.stringify(todos));
+        }else{
+            res.send(`{"mensajeError":"No hay productos"}`);
+        }
+      })();
+})
+
+apiProductos.get('/:id',(req, res)=>{
+    (async() => {
+        let buscado = await prod.getById(req.params.id);
+        if(buscado){
+            res.send(JSON.stringify(buscado));
+        }else{
+            res.send(`{"mensajeError":"No exite dicho producto"}`);
+        }
+      })();
+
+})
+
+apiProductos.post('/',(req, res)=>{
+    (async() => {
+        let nuevo = await prod.save(req.body);
+        if(nuevo){
+            if(req.body.fromForm == 1){
+                res.redirect('/creado.html');
+            }else{
+                res.send(`{"mensajeExito":"Producto creado","itemNuevo":${nuevo}}`);
+            }
+        }else{
+            res.send(`{"mensajeError":"No se creo el producto"}`);
+        }
+      })();
+})
+
+apiProductos.put('/:id',(req, res)=>{
+    (async() => {
+        let buscado = await prod.editById(req.params.id,req.body);
+        if(buscado){
+            res.send(JSON.stringify(buscado));
+        }else{
+            res.send(`{"mensajeError":"No exite dicho producto"}`);
+        }
+      })();
+
+})
+
+apiProductos.delete('/:id',(req, res)=>{
+    (async() => {
+        let buscado = await prod.getById(req.params.id);
+        if(buscado){
+            await prod.deleteById(req.params.id);
+            res.send(`{"mensajeExito":"Producto borrado"}`);
+        }else{
+            res.send(`{"mensajeError":"No se borrar el producto"}`);
+        }
+      })();
+})
+
+app.use('/api/productos', apiProductos);
+
+app.use(express.static('public'));
 
 const server = app.listen(PORT, () => {
     console.log(`test en el puesto ${server.address().port}`);

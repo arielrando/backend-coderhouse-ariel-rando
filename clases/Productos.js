@@ -18,16 +18,21 @@ module.exports = class Productos {
     async save(producto){
         try{
             let test = await this.manejoArchivosAux.obtenerArchivoJson('productos.txt');
+            let productoNuevo = {};
             if(test){
-                producto.id  = test[test.length-1].id+1;
-                test.push(producto);
+                productoNuevo.id  = test[test.length-1].id+1;
+                productoNuevo.title = producto.title;
+                productoNuevo.price = producto.price;
+                productoNuevo.thumbnail = producto.thumbnail;
+                test.push(productoNuevo);
                 
             }else{
                 producto.id = 1
                 test = [producto];
+                productoNuevo = producto;
             }
             await this.manejoArchivosAux.grabarArchivoJson('productos.txt',test);
-            return producto.id;
+            return productoNuevo.id;
         }catch(err){
             console.log('No se pudo grabar el archivo de los productos ',archivo,': ',err);
         }
@@ -43,6 +48,32 @@ module.exports = class Productos {
                         result = element;
                     }
                 });
+            }
+            return result;
+        }catch(err){
+            console.log('No se pudo buscar el producto ',num,': ',err);
+        }
+    }
+
+    async editById(num,producto){
+        try{
+            let test = await this.manejoArchivosAux.obtenerArchivoJson('productos.txt');
+            let result = null;
+            let index = null;
+            if(test){
+                test.forEach(function (element, i) {
+                    if(element.id==num){
+                        result = element;
+                        index = i;
+                    }
+                });
+            }
+            if(result){
+                result.title = producto.title;
+                result.price = producto.price;
+                result.thumbnail = producto.thumbnail;
+                test[index] = result;
+                await this.manejoArchivosAux.grabarArchivoJson('productos.txt',test);
             }
             return result;
         }catch(err){
