@@ -11,7 +11,7 @@ module.exports = class Productos {
             let test = await this.manejoArchivosAux.obtenerArchivoJson('productos.txt');
             return test;
         }catch(err){
-            console.log('No se pudo leer el archivo de los productos ',archivo,': ',err);
+            console.log('No se pudo leer el archivo de los productos productos.txt: ',err);
         }
     }
 
@@ -34,7 +34,7 @@ module.exports = class Productos {
             await this.manejoArchivosAux.grabarArchivoJson('productos.txt',test);
             return productoNuevo.id;
         }catch(err){
-            console.log('No se pudo grabar el archivo de los productos ',archivo,': ',err);
+            console.log('No se pudo grabar el archivo de los productos productos.txt: ',err);
         }
     }
 

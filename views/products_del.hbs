@@ -1,0 +1,21 @@
+
+<div style="height:50px;">
+    <h2>Eliminar producto</h2>
+</div>
+<div class="row">
+  <div class="col-sm-12 px-md-5">
+      
+    {{#if product}}
+    <h3>Seguro desea eliminar el producto {{id}} ({{nombre}}) ?</h3>
+    <form action="/eliminar" method="POST">
+  <input type="hidden" name="idProduct" value="{{id}}">
+  <button class="btn btn-primary btn-sm active" name="submit" value="S" type="submit">Si</button> 
+  <button class="btn btn-danger btn-sm active" name="submit" value="N" type="submit">No</button> 
+</form> 
+{{else}}
+    <h3>Dicho producto no existe</h3>
+{{/if}}
+    <br>
+    <a href="/" class="btn btn-dark btn-sm active" role="button" aria-pressed="true">Volver</a>
+  </div>
+</div>
