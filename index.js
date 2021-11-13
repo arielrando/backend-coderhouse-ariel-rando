@@ -1,26 +1,32 @@
 const moment = require('moment');  
 const express = require('express');
 const handlebars = require("express-handlebars");
-const { Server: HttpServer } = require('http')
-const { Server: IOServer } = require('socket.io')
+const { Server: HttpServer } = require('http');
+const { Server: IOServer } = require('socket.io');
+const {Router} = express;
+global.Ruta = Router;
+global.admin = true;
+global.carritoId = null;
 
 const app = express();
 const httpServer = new HttpServer(app)
 const io = new IOServer(httpServer)
 
-//const {Router} = express;
-
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 const productos = require('./clases/Productos.js');
+const carrito = require('./clases/Carrito.js');
 const objchat = require('./clases/Chat.js');
 
 const prod = new productos();
 const chat = new objchat();
+const carr = new carrito();
+
+const productosApi = require('./api/productosApi.js');
+const carritoApi = require('./api/carritoApi.js');
 
 app.use(express.static('./public'));
-
 
 app.engine(
     "hbs",
@@ -44,64 +50,41 @@ app.get('/productos',(req, res) => {
         if(todos){
             hayProductos = true;
         }
-        switch(req.query.estado) {
-            case 'exito':
-                mensaje = `<div class="alert alert-primary col-sm-4" role="alert">Producto creado con el ID ${req.query.id}</div>`
-                break;
-            case 'fallo':
-                mensaje = `<div class="alert alert-danger col-sm-4" role="alert">Error al crear el producto</div>`
-                break;
-            case 'eliminado':
-                mensaje = `<div class="alert alert-primary col-sm-4" role="alert">El producto ${req.query.id} fue eliminado</div>`
-                break;
-          }
-
-        res.render('products_list.hbs',{productList: todos, hayProductos: hayProductos, mensaje: mensaje});
-      })();
-})
-
-app.get('/agregar',(req, res) => {
-    res.render('products_form.hbs',{product: false, id: ''});
-})
-
-app.post('/agregar',(req, res)=>{
-    (async() => {
-        let nuevo = await prod.save(req.body);
-        if(nuevo){
-            res.redirect(`/productos?estado=exito&id=${nuevo}`);
-        }else{
-            res.redirect(`/productos?estado=fallo`);
+        if(!carritoId){
+            carritoId = await carr.create();
         }
+        res.render('products_list.hbs',{productList: todos, hayProductos: hayProductos, mensaje: mensaje, admin: admin, carritoId: carritoId});
       })();
 })
 
-app.get('/eliminar/:id',(req, res) => {
+app.get('/modificar/:id',(req, res) => {
     (async() => {
         let buscado = await prod.getById(req.params.id);
         if(buscado){
-            res.render('products_del.hbs',{product: true, id: req.params.id, nombre:buscado.title});
+            res.render('products_form.hbs',{product: buscado, id: req.params.id});
         }else{
-            res.render('products_del.hbs',{product: false, id: '', nombre:''});
+            res.redirect(`/productos`);
         }
       })();
     
 })
 
-app.post('/eliminar',(req, res)=>{
+app.get('/carrito',(req, res) => {
     (async() => {
-        if(req.body.submit == 'S'){
-            await prod.deleteById(req.body.idProduct);
-            res.redirect(`/productos?estado=eliminado&id=${req.body.idProduct}`);
-        }else{
-            res.redirect(`/productos`);
+        let carrito = await carr.getProductsById(carritoId);
+        let hayProductos = false;
+        if(carrito && carrito.length>0){
+            hayProductos = true;
         }
+        res.render('products_carrito.hbs',{carrito: carrito, carritoId:carritoId, hayProductos: hayProductos});
       })();
 })
 
-io.on('connection', (socket) => { //"connection" se ejecuta la primera vez que se abre una nueva conexión
-    console.log('Usuario conectado') // Se imprimirá solo la primera vez que se ha abierto la conexión   
-    socket.emit('mi mensaje', 'Este es mi mensaje desde el servidor') 
-  
+app.get('/instrucciones_api',(req, res) => {
+    res.render('instrucciones_api.hbs');
+});
+
+io.on('connection', (socket) => { 
     socket.on('grabarMensaje', data => {
         (async() => {
             data = JSON.parse(data);
@@ -111,25 +94,18 @@ io.on('connection', (socket) => { //"connection" se ejecuta la primera vez que s
             io.sockets.emit('mensajeNuevo', JSON.stringify(data));
           })();
     })
-
-    socket.on('grabarProducto', data => {
-        (async() => {
-            data = JSON.parse(data);
-            console.log(data);
-            let nuevo = await prod.save(data);
-            if(nuevo){
-                let producto = await prod.getById(nuevo);
-                io.sockets.emit('productoNuevo', JSON.stringify(producto));
-            }else{
-                io.sockets.emit('errorGrabarProducto');
-            }
-        })();
-    })
   
     socket.on('notificacion', data => {
       console.log(data);
     })
-})
+});
+
+app.use('/api/productos', productosApi);
+app.use('/api/carrito', carritoApi);
+
+app.use((req, res, next) => {
+    res.send(`{ "error" : -1, "descripcion": "ruta ${req.url} método ${req.method} no existe"}`);
+});
 
 httpServer.listen(8080, () => console.log('SERVER ON')) // El servidor funcionando en el puerto 3000
 httpServer.on('error', (err) =>console.log(err));

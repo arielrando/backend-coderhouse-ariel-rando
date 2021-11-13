@@ -4,11 +4,12 @@ module.exports = class Productos {
         this.price = price;
         this.thumbnail = thumbnail;
         this.manejoArchivosAux = require('./ManejoArchivos.js');
+        this.dbFileText = 'productos.txt';
     }
 
     async getAll(){
         try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson('productos.txt');
+            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
             return test;
         }catch(err){
             console.log('No se pudo leer el archivo de los productos productos.txt: ',err);
@@ -17,7 +18,7 @@ module.exports = class Productos {
 
     async save(producto){
         try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson('productos.txt');
+            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
             let productoNuevo = {};
             if(test){
                 productoNuevo.id  = test[test.length-1].id+1;
@@ -31,7 +32,7 @@ module.exports = class Productos {
                 test = [producto];
                 productoNuevo = producto;
             }
-            await this.manejoArchivosAux.grabarArchivoJson('productos.txt',test);
+            await this.manejoArchivosAux.grabarArchivoJson(this.dbFileText,test);
             return productoNuevo.id;
         }catch(err){
             console.log('No se pudo grabar el archivo de los productos productos.txt: ',err);
@@ -40,7 +41,7 @@ module.exports = class Productos {
 
     async getById(num){
         try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson('productos.txt');
+            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
             let result = null;
             if(test){
                 test.forEach(element => {
@@ -57,7 +58,7 @@ module.exports = class Productos {
 
     async editById(num,producto){
         try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson('productos.txt');
+            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
             let result = null;
             let index = null;
             if(test){
@@ -73,7 +74,7 @@ module.exports = class Productos {
                 result.price = producto.price;
                 result.thumbnail = producto.thumbnail;
                 test[index] = result;
-                await this.manejoArchivosAux.grabarArchivoJson('productos.txt',test);
+                await this.manejoArchivosAux.grabarArchivoJson(this.dbFileText,test);
             }
             return result;
         }catch(err){
@@ -83,22 +84,21 @@ module.exports = class Productos {
 
     async deleteById(num){
         try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson('productos.txt');
+            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
 
             test.forEach(function (element, index) {
                 if(element.id==num){
                     test.splice(index, 1);
-                    console.log('entrada borrada');
                 }
             });
-            await this.manejoArchivosAux.grabarArchivoJson('productos.txt',test);
+            await this.manejoArchivosAux.grabarArchivoJson(this.dbFileText,test);
         }catch(err){
             console.log('No se pudo borrar el producto ',num,': ',err);
         }
     }
 
     async deleteAll(){
-        await this.manejoArchivosAux.grabarArchivo('productos.txt',``);
+        await this.manejoArchivosAux.grabarArchivo(this.dbFileText,``);
     }
 }
 

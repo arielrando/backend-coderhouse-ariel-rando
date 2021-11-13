@@ -1,21 +1,18 @@
 <div style="height:50px;">
-  {{#if product}}
     <h2>Modificar producto</h2>
-    {{else}}
-        <h2>Agregar producto</h2>
-    {{/if}}
 </div>
 <div class="row">
   <div class="col-sm-12 px-md-5">
       
-    <form action="agregar" method="POST">
+    <form id="modificarProd">
       <label for="title">Titulo:</label><br>
-      <input type="text" id="title" name="title"><br>
+      <input type="text" id="title" name="title" value="{{product.title}}"><br>
       <label for="price">Precio:</label><br>
-      <input type="number" id="price" name="price"><br>
+      <input type="number" id="price" name="price" value="{{product.price}}"><br>
       <label for="thumbnail">Thumbnail:</label><br>
-      <input type="text" id="thumbnail" name="thumbnail"><br><br>
-      <button class="btn btn-primary btn-sm active" name="submit" value="S" type="submit">Crear</button>
+      <input type="text" id="thumbnail" name="thumbnail" value="{{product.thumbnail}}"><br><br>
+      <input type="hidden" id="id" name="id" value="{{id}}">
+      <button class="btn btn-primary btn-sm active" name="submit" value="S" type="submit">Modificar</button>
     </form> 
     <br>
     <a href="/" class="btn btn-dark btn-sm active" role="button" aria-pressed="true">Volver</a>

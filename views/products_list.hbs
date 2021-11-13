@@ -1,5 +1,5 @@
-<div class="row" style="height:40px;"><h2>Lista de productos</h2></div>
-<div class="row" style="height:65px;"><div class="col-sm-4"></div>{{{mensaje}}}<div class="col-sm-4"></div> </div>
+<input type="hidden" id="carritoId" value="{{carritoId}}"/>
+<div class="row" style="height:50px;"><h2>Lista de productos</h2></div>
 <div class="row">
     <div class="col-sm-2"></div>
     <div class="col-sm-8">
@@ -11,7 +11,8 @@
                 <th scope="col">Nombre</th>
                 <th scope="col">Precio</th>
                 <th scope="col">Imagen</th>
-                <th scope="col">Eliminar</th>
+                <th scope="col">Carrito</th>
+                {{#if admin}}<th scope="col">Acciones</th>{{/if}}
                 </tr>
             </thead>
             <tbody>
@@ -21,7 +22,16 @@
                         <td>{{this.title}}</td>
                         <td>{{this.price}}</td>
                         <td><img src="{{this.thumbnail}}" alt="{{this.title}}" height="50"></td>
-                        <th scope="row"><a href="/eliminar/{{this.id}}">X</a></th>
+                        <td>
+                            <input type="number" id="cantidad_{{this.id}}" min="0" value="0" style="width:60px" class="form-inline" />
+                            <button class="btn btn-success btn-sm active" onclick="agregarCarrito({{this.id}});" >+</button>
+                        </td>
+                        {{#if ../admin}}
+                            <td>
+                                <a class="btn btn-primary btn-sm active" href="modificar/{{this.id}}" >Modificar</a> 
+                                <button class="btn btn-danger btn-sm active" onclick="borrarProd({{this.id}});" >Borrar</button>
+                            </td>
+                        {{/if}}
                     </tr>
                 {{/each}}
             </tbody>
@@ -33,11 +43,12 @@
             </tbody>
         {{/if}}
         </table>
-        <!--<a href="/agregar" class="btn btn-primary btn-sm active" role="button" aria-pressed="true">Agregar</a>-->
+        <a class="btn btn-primary btn-sm active" role="button" href="/carrito" >Ver carrito</a> 
+        <a class="btn btn-info btn-sm active" role="button" href="/instrucciones_api" >Instrucciones para usar las APIs</a>
     </div>
     <div class="col-sm-2"></div>
 </div>
-
+{{#if admin}}
 <div style="height:50px;">
     <h2>Agregar producto</h2>
 </div>
@@ -56,7 +67,7 @@
     </div>
     <div class="col-sm-2"></div>
 </div>
-
+{{/if}}
 <div style="height:50px;">
     <h2>Caja de chat</h2>
 </div>
@@ -71,7 +82,7 @@
             </div> 
             <br>
             <span>Usuario:</span> 
-            <input class="form-control" type="text" name="usuario" id="usuario" placeholder="Nombre"/>
+            <input class="form-control" type="text" name="usuario" id="usuario" placeholder="E-mail"/>
             <br>
             <span>Mensaje a enviar:</span> 
             <br>

@@ -1,0 +1,49 @@
+<input type="hidden" id="carritoId" value="{{carritoId}}"/>
+<div class="row" style="height:50px;"><h2>Carrito</h2></div>
+<div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+        <table class="table table-dark" id="tablaProductos">
+            {{#if hayProductos}}
+            <thead>
+                <tr>
+                <th scope="col">ID de producto</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Imagen</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Borrar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each carrito}}
+                    <tr>
+                        <td>{{this.idProducto}}</td>
+                        <td>{{this.title}}</td>
+                        <td>{{this.price}}</td>
+                        <td><img src="{{this.thumbnail}}" alt="{{this.title}}" height="50"></td>
+                        <td>{{this.cantidad}}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm active" onclick="borrarProdCarrito({{this.idProducto}});" ><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+            {{else}}
+            <tbody>
+                    <tr>
+                        <td>No hay productos para mostrar</td>
+                    </tr>
+            </tbody>
+        {{/if}}
+        </table>
+        <br>
+        <a href="/" class="btn btn-dark btn-sm active" role="button" aria-pressed="true">Volver</a>
+    </div>
+    <div class="col-sm-2"></div>
+    
+</div>
+
+
+
+
