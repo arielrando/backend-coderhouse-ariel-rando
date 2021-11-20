@@ -100,30 +100,37 @@ window.onload = function() {
     if(formAgregarProductos){
         formAgregarProductos.addEventListener('submit', e =>{
             e.preventDefault();
-            if(!document.getElementById('title').value || /^\s*$/.test(document.getElementById('title').value)){
-                alert('El campo titulo no puede estar vacio!');
+            if(!document.getElementById('codigo').value || /^\s*$/.test(document.getElementById('codigo').value)){
+                alert('El campo codigo no puede estar vacio!');
                 return null;
             }
-            if(!document.getElementById('price').value || isNaN(document.getElementById('price').value)){
+            if(!document.getElementById('nombre').value || /^\s*$/.test(document.getElementById('nombre').value)){
+                alert('El campo nombre no puede estar vacio!');
+                return null;
+            }
+            if(!document.getElementById('precio').value || isNaN(document.getElementById('precio').value)){
                 alert('Ingrese un precio valido!');
                 return null;
             }
-            if(!document.getElementById('thumbnail').value || /^\s*$/.test(document.getElementById('thumbnail').value)){
-                alert('El campo thumbnail no puede estar vacio!');
+            if(isNaN(document.getElementById('stock').value)){
+                alert('Ingrese un stock valido!');
                 return null;
             }
-            let body = '{ "title":"'+document.getElementById('title').value+'","price":"'+document.getElementById('price').value+'","thumbnail":"'+document.getElementById('thumbnail').value+'"}';
+            if(!document.getElementById('foto').value || /^\s*$/.test(document.getElementById('foto').value)){
+                alert('El campo foto no puede estar vacio!');
+                return null;
+            }
+            let body = '{ "codigo":"'+document.getElementById('codigo').value+'","nombre":"'+document.getElementById('nombre').value+'","precio":"'+document.getElementById('precio').value+'","foto":"'+document.getElementById('foto').value+'","stock":"'+document.getElementById('stock').value+'"}';
             fetch("/api/productos", {method: "POST",headers: {"Content-Type": "application/json"},body: body})
                 .then(response => response.text())
                 .then(data => {
                     const json = JSON.parse(data);
                     if(json.itemNuevo){
-                        
                         fetch("/api/productos/"+json.itemNuevo, {method: "GET"})
                         .then(response => response.text())
                         .then(data => {
                             const jsonProd = JSON.parse(data);
-                            alert(`se creo el producto ${jsonProd.title} con el id ${jsonProd.id}`);
+                            alert(`se creo el producto ${jsonProd.nombre} con el id ${jsonProd.id}`);
                             window.location.reload();
                         })
                     }else{
@@ -138,25 +145,34 @@ window.onload = function() {
     if(formModificarProd){
         formModificarProd.addEventListener('submit', e =>{
             e.preventDefault();
-            if(!document.getElementById('title').value || /^\s*$/.test(document.getElementById('title').value)){
-                alert('El campo titulo no puede estar vacio!');
+            if(!document.getElementById('codigo').value || /^\s*$/.test(document.getElementById('codigo').value)){
+                alert('El campo codigo no puede estar vacio!');
                 return null;
             }
-            if(!document.getElementById('price').value || isNaN(document.getElementById('price').value)){
+            if(!document.getElementById('nombre').value || /^\s*$/.test(document.getElementById('nombre').value)){
+                alert('El campo nombre no puede estar vacio!');
+                return null;
+            }
+            if(!document.getElementById('precio').value || isNaN(document.getElementById('precio').value)){
                 alert('Ingrese un precio valido!');
                 return null;
             }
-            if(!document.getElementById('thumbnail').value || /^\s*$/.test(document.getElementById('thumbnail').value)){
-                alert('El campo thumbnail no puede estar vacio!');
+            if(isNaN(document.getElementById('stock').value)){
+                alert('Ingrese un stock valido!');
                 return null;
             }
-            let body = '{ "title":"'+document.getElementById('title').value+'","price":"'+document.getElementById('price').value+'","thumbnail":"'+document.getElementById('thumbnail').value+'"}';
+            if(!document.getElementById('foto').value || /^\s*$/.test(document.getElementById('foto').value)){
+                alert('El campo foto no puede estar vacio!');
+                return null;
+            }
+
+            let body = '{ "codigo":"'+document.getElementById('codigo').value+'","nombre":"'+document.getElementById('nombre').value+'","precio":"'+document.getElementById('precio').value+'","foto":"'+document.getElementById('foto').value+'","stock":"'+document.getElementById('stock').value+'"}';
             fetch("/api/productos/"+document.getElementById('id').value, {method: "PUT",headers: {"Content-Type": "application/json"},body: body})
                 .then(response => response.text())
                 .then(data => {
                     const json = JSON.parse(data);
                     if(!json.mensajeError){
-                        alert(`se modifico el producto ${json.title} con el id ${json.id}`);
+                        alert(`se modifico el producto ${json.nombre} con el id ${json.id}`);
                         window.location.replace("/");
                     }else{
                         console.log(json.mensajeError);

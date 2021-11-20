@@ -18,10 +18,20 @@ app.use(express.urlencoded({extended: true}));
 const productos = require('./clases/Productos.js');
 const carrito = require('./clases/Carrito.js');
 const objchat = require('./clases/Chat.js');
+const MySQLclient = require('./clases/MySQLclient.js');
+const SQLite3client = require('./clases/SQLite3client.js');
 
 const prod = new productos();
 const chat = new objchat();
 const carr = new carrito();
+const mysql = new MySQLclient();
+const sqlite = new SQLite3client();
+
+(async() => {
+    await mysql.inicializarTablas();
+    await sqlite.inicializarTablas();
+})();
+
 
 const productosApi = require('./api/productosApi.js');
 const carritoApi = require('./api/carritoApi.js');
@@ -47,7 +57,7 @@ app.get('/productos',(req, res) => {
         let todos = await prod.getAll();
         let hayProductos = false;
         let mensaje = null;
-        if(todos){
+        if(todos.length>0){
             hayProductos = true;
         }
         if(!carritoId){
@@ -60,8 +70,8 @@ app.get('/productos',(req, res) => {
 app.get('/modificar/:id',(req, res) => {
     (async() => {
         let buscado = await prod.getById(req.params.id);
-        if(buscado){
-            res.render('products_form.hbs',{product: buscado, id: req.params.id});
+        if(buscado.length>0){
+            res.render('products_form.hbs',{product: buscado[0], id: req.params.id});
         }else{
             res.redirect(`/productos`);
         }

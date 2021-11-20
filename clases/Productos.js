@@ -1,56 +1,31 @@
 module.exports = class Productos {
-    constructor(title='',price=0,thumbnail=''){
-        this.title = title;
-        this.price = price;
-        this.thumbnail = thumbnail;
-        this.manejoArchivosAux = require('./ManejoArchivos.js');
-        this.dbFileText = 'productos.txt';
+    constructor(){
+        let options = require('../options/mysql.js');
+        let knex = require('knex');
+        
+        this.objKnex = knex(options);
     }
 
     async getAll(){
         try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
+            let test = await this.objKnex('productos').select('*');
             return test;
         }catch(err){
-            console.log('No se pudo leer el archivo de los productos productos.txt: ',err);
+            console.log('No se pudo obtener los productos de la base de datos: ',err);
         }
     }
 
     async save(producto){
         try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
-            let productoNuevo = {};
-            if(test){
-                productoNuevo.id  = test[test.length-1].id+1;
-                productoNuevo.title = producto.title;
-                productoNuevo.price = producto.price;
-                productoNuevo.thumbnail = producto.thumbnail;
-                test.push(productoNuevo);
-                
-            }else{
-                producto.id = 1
-                test = [producto];
-                productoNuevo = producto;
-            }
-            await this.manejoArchivosAux.grabarArchivoJson(this.dbFileText,test);
-            return productoNuevo.id;
+            return await this.objKnex('productos').insert(producto, ['id']);
         }catch(err){
-            console.log('No se pudo grabar el archivo de los productos productos.txt: ',err);
+            console.log('No se pudo grabar el producto en la base de datos: ',err);
         }
     }
 
     async getById(num){
         try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
-            let result = null;
-            if(test){
-                test.forEach(element => {
-                    if(element.id==num){
-                        result = element;
-                    }
-                });
-            }
-            return result;
+            return await this.objKnex('productos').where('id',num).select('*');
         }catch(err){
             console.log('No se pudo buscar el producto ',num,': ',err);
         }
@@ -58,47 +33,37 @@ module.exports = class Productos {
 
     async editById(num,producto){
         try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
-            let result = null;
-            let index = null;
-            if(test){
-                test.forEach(function (element, i) {
-                    if(element.id==num){
-                        result = element;
-                        index = i;
-                    }
-                });
+            let buscado = await this.objKnex('productos').where('id',num).select('*');
+            if(buscado.length>0){
+                let result = await this.objKnex.from('productos').where('id', num).update(producto);
+                if(result){
+                    producto.id = num;
+                    return producto
+                }else{
+                    return null;
+                }
+            }else{
+                return null;
             }
-            if(result){
-                result.title = producto.title;
-                result.price = producto.price;
-                result.thumbnail = producto.thumbnail;
-                test[index] = result;
-                await this.manejoArchivosAux.grabarArchivoJson(this.dbFileText,test);
-            }
-            return result;
         }catch(err){
-            console.log('No se pudo buscar el producto ',num,': ',err);
+            console.log('No se pudo modificar el producto ',num,': ',err);
         }
     }
 
     async deleteById(num){
         try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
-
-            test.forEach(function (element, index) {
-                if(element.id==num){
-                    test.splice(index, 1);
-                }
-            });
-            await this.manejoArchivosAux.grabarArchivoJson(this.dbFileText,test);
+            let buscado = await this.objKnex('productos').where('id',num).select('*');
+            if(buscado.length>0){
+                return await this.objKnex.from('productos').where('id', num).del();
+            }else{
+                return null;
+            }
         }catch(err){
             console.log('No se pudo borrar el producto ',num,': ',err);
         }
     }
 
     async deleteAll(){
-        await this.manejoArchivosAux.grabarArchivo(this.dbFileText,``);
+        await this.objKnex('productos').truncate();
     }
 }
-

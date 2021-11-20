@@ -46,10 +46,10 @@ module.exports = class Carrito {
                     result = [];
                     await Promise.all(test[index].productos.map(async (elementProducto) => {
                         let prodAux = await this.prod.getById(elementProducto.idProducto);
-                        if(prodAux){
-                            elementProducto.title = prodAux.title;
-                            elementProducto.price = prodAux.price;
-                            elementProducto.thumbnail = prodAux.thumbnail;
+                        if(prodAux.length>0){
+                            elementProducto.title = prodAux[0].nombre;
+                            elementProducto.price = prodAux[0].precio;
+                            elementProducto.thumbnail = prodAux[0].foto;
                             result.push(elementProducto);
                         }
                     }));
@@ -67,7 +67,7 @@ module.exports = class Carrito {
                 producto.cantidad = 1;
             }
             let buscado = await this.prod.getById(producto.id);
-            if(buscado){
+            if(buscado.length>0){
                 let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
                 let result = null;
                 let index = null;
@@ -114,7 +114,7 @@ module.exports = class Carrito {
     async deleteProduct(carrito,producto){
         try{
             let buscado = await this.prod.getById(producto);
-            if(buscado){
+            if(buscado.length>0){
                 let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
                 let result = null;
                 let index = null;

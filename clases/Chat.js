@@ -1,20 +1,17 @@
 module.exports = class Chat {
     constructor(){
-        this.manejoArchivosAux = require('./ManejoArchivos.js');
+        let options = require('../options/sqlite3.js');
+        let knex = require('knex');
+        
+        this.objKnex = knex(options);
     }
 
     async save(mensaje){
         try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson('chat.txt');
-            if(test){
-                test.push(mensaje);
-            }else{
-                test = [mensaje];
-            }
-            await this.manejoArchivosAux.grabarArchivoJson('chat.txt',test);
+            await this.objKnex('chats').insert(mensaje);
             return null;
         }catch(err){
-            console.log('No se pudo grabar el archivo de los chats chat.txt: ',err);
+            console.log('No se pudo grabar el chat en la base de datos: ',err);
         }
     }
 }

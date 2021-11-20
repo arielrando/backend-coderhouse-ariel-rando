@@ -19,9 +19,9 @@
                 {{#each productList}}
                     <tr>
                         <td>{{this.id}}</td>
-                        <td>{{this.title}}</td>
-                        <td>{{this.price}}</td>
-                        <td><img src="{{this.thumbnail}}" alt="{{this.title}}" height="50"></td>
+                        <td>{{this.nombre}}</td>
+                        <td>{{this.precio}}</td>
+                        <td><img src="{{this.foto}}" alt="{{this.nombre}}" height="50"></td>
                         <td>
                             <input type="number" id="cantidad_{{this.id}}" min="0" value="0" style="width:60px" class="form-inline" />
                             <button class="btn btn-success btn-sm active" onclick="agregarCarrito({{this.id}});" >+</button>
@@ -56,12 +56,16 @@
     <div class="col-sm-2"></div>
     <div class="col-sm-8">
         <form id="agregarProductos" >
-        <label for="title">Titulo:</label><br>
-        <input class="form-control" type="text" id="title" name="title"><br>
-        <label for="price">Precio:</label><br>
-        <input class="form-control" type="number" step="0.01" id="price" name="price"><br>
-        <label for="thumbnail">Thumbnail:</label><br>
-        <input class="form-control" type="text" id="thumbnail" name="thumbnail"><br><br>
+        <label for="codigo">Codigo:</label><br>
+        <input class="form-control" type="text" id="codigo" name="codigo"><br>
+        <label for="nombre">Nombre:</label><br>
+        <input class="form-control" type="text" id="nombre" name="nombre"><br>
+        <label for="precio">Precio:</label><br>
+        <input class="form-control" type="number" step="0.01" id="precio" name="precio"><br>
+        <label for="stock">Stock:</label><br>
+        <input class="form-control" type="number" step="1" id="stock" name="stock"><br>
+        <label for="foto">Foto:</label><br>
+        <input class="form-control" type="text" id="foto" name="foto"><br><br>
         <button class="btn btn-primary btn-sm active" name="submit" value="S" type="submit">Crear</button>
         </form> 
     </div>

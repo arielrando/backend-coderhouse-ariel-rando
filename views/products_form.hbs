@@ -5,12 +5,16 @@
   <div class="col-sm-12 px-md-5">
       
     <form id="modificarProd">
-      <label for="title">Titulo:</label><br>
-      <input type="text" id="title" name="title" value="{{product.title}}"><br>
-      <label for="price">Precio:</label><br>
-      <input type="number" id="price" name="price" value="{{product.price}}"><br>
-      <label for="thumbnail">Thumbnail:</label><br>
-      <input type="text" id="thumbnail" name="thumbnail" value="{{product.thumbnail}}"><br><br>
+      <label for="codigo">Codigo:</label><br>
+      <input class="form-control" type="text" id="codigo" name="codigo" value="{{product.codigo}}"><br>
+      <label for="nombre">Nombre:</label><br>
+      <input class="form-control" type="text" id="nombre" name="nombre" value="{{product.nombre}}"><br>
+      <label for="precio">Precio:</label><br>
+      <input class="form-control" type="number" id="precio" name="precio" step="0.01" value="{{product.precio}}"><br>
+      <label for="stock">Stock:</label><br>
+      <input class="form-control" type="number" step="1" id="stock" name="stock" value="{{product.stock}}"><br>
+      <label for="foto">Foto:</label><br>
+      <input class="form-control" type="text" id="foto" name="foto" value="{{product.foto}}"><br><br>
       <input type="hidden" id="id" name="id" value="{{id}}">
       <button class="btn btn-primary btn-sm active" name="submit" value="S" type="submit">Modificar</button>
     </form> 
