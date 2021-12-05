@@ -25,7 +25,7 @@ module.exports = class Productos extends prodDao {
                 super('productos',esquema)
             break;
             case 'firebase':
-            
+                super('productos');
             break;
             default:
         

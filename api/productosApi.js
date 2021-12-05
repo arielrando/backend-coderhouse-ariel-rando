@@ -30,7 +30,6 @@ apiProductos.post('/',(req, res)=>{
         (async() => {
             let nuevo = await prod.save(req.body);
             if(nuevo){
-                console.log(nuevo);
                 res.send(`{"mensajeExito":"Producto creado","itemNuevo":"${nuevo}"}`);
             }else{
                 res.send(`{"mensajeError":"No se creo el producto"}`);

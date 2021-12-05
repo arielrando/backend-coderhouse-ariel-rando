@@ -1,1 +1,0 @@
-[{"title":"test nuevo","price":2,"thumbnail":"test","id":1},{"title":"test nuevo","price":2,"thumbnail":"test","id":2},{"title":"test nuevo","price":2,"thumbnail":"test","id":3},{"title":"test nuevo","price":2,"thumbnail":"test","id":4},{"codigo":"test modificado","nombre":"test modificado","descripcion":"test modificado","foto":"test modificado","precio":3,"stock":3,"id":5}]

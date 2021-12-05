@@ -3,6 +3,30 @@ module.exports = class ManejoArchivos{
         this.tabla = tabla;
     }
 
+    static async inicializarTablas(){
+        try{
+            let vacio = true;
+            const fs = require('fs');
+            const contenido = await fs.promises.readFile('./DB/Productos.txt', 'utf-8');
+            if(contenido){
+                let datos = JSON.parse(contenido);
+                if(datos.length>0){
+                    vacio = false;
+                }
+            }
+            if(vacio){
+                let objeto = JSON.stringify([
+                    {id:1,codigo:"001",nombre:"Escuadra",fechaCreacion: Date(),fechaModificacion: Date(),descripcion:null,precio:123.45,stock:20,foto:"https://cdn3.iconfinder.com/data/icons/education-209/64/ruler-triangle-stationary-school-256.png"	},	
+                    {id:2,codigo:"002",nombre:"Calculadora",fechaCreacion: Date(),fechaModificacion: Date(),descripcion:null,precio:234.56,stock:54,foto:"https://cdn3.iconfinder.com/data/icons/education-209/64/calculator-math-tool-school-256.png"	},	
+                    {id:3,codigo:"003",nombre:"Globo Terraqueo",fechaCreacion: Date(),fechaModificacion: Date(),descripcion:null,precio:345.67,stock:127,foto:"https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png"	}
+                ]);
+                await fs.promises.writeFile('./DB/Productos.txt', objeto);
+            }
+        }catch(err){
+            console.log('error al leer el archivo error al tratar de inicializar las tablas: ',err);
+        }
+    }
+
     async obtenerArchivoJson(archivo){
         try{
             const fs = require('fs');
@@ -85,6 +109,7 @@ module.exports = class ManejoArchivos{
             if(test){
                 let index = test.findIndex(x => x.id == num);
                 if(index != -1){
+                    item.id=num;
                     test[index] = item;
                     result = item;
                     await this.grabarArchivoJson(this.tabla,test);

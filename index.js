@@ -10,6 +10,10 @@ const {DBdefault} = require('./config.js');
     const SQLite3client = require('./clases/manejadores/SQLite3client.js');
     await SQLite3client.inicializarTablas();
     switch (DBdefault) {
+        case 'archivoTexto':
+            const ManejoArchivosclient = require('./clases/manejadores/ManejoArchivos.js');
+            await ManejoArchivosclient.inicializarTablas();
+        break;
         case 'mysql':
             const MySQLclient = require('./clases/manejadores/MySQLclient.js');
             await MySQLclient.inicializarTablas();
@@ -19,7 +23,8 @@ const {DBdefault} = require('./config.js');
             await MongoDBclient.inicializarTablas();
         break;
         case 'firebase':
-        
+            const Firebaseclient = require('./clases/manejadores/Firebaseclient.js');
+            await Firebaseclient.inicializarTablas();
         break;
     }
 })();

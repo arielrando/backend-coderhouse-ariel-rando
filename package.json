@@ -6,6 +6,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "express-handlebars": "^5.3.4",
+    "firebase-admin": "^10.0.0",
     "knex": "^0.95.14",
     "moment": "^2.29.1",
     "mongoose": "^6.0.14",

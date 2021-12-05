@@ -13,10 +13,10 @@ switch (DBdefault) {
         productosDao = require("../manejadores/MongoDBclient.js");
     break;
     case 'firebase':
-    
+        productosDao = require("../manejadores/Firebaseclient.js");
     break;
     default:
-
+        productosDao =  require("../manejadores/ManejoArchivos.js");
     break;
 }
 
