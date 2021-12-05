@@ -1,3 +1,4 @@
+/* archivoTexto - mysql - mongoDB - firebase*/
 const DBdefault = 'mysql';
 
 const optionsMysql ={
