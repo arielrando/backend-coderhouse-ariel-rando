@@ -4,6 +4,26 @@ const handlebars = require("express-handlebars");
 const { Server: HttpServer } = require('http');
 const { Server: IOServer } = require('socket.io');
 const {Router} = express;
+
+const {DBdefault} = require('./config.js');
+(async() => {
+    const SQLite3client = require('./clases/manejadores/SQLite3client.js');
+    await SQLite3client.inicializarTablas();
+    switch (DBdefault) {
+        case 'mysql':
+            const MySQLclient = require('./clases/manejadores/MySQLclient.js');
+            await MySQLclient.inicializarTablas();
+        break;
+        case 'mongoDB':
+            const MongoDBclient = require('./clases/manejadores/MongoDBclient.js');
+            await MongoDBclient.inicializarTablas();
+        break;
+        case 'firebase':
+        
+        break;
+    }
+})();
+
 global.Ruta = Router;
 global.admin = true;
 global.carritoId = null;
@@ -15,23 +35,13 @@ const io = new IOServer(httpServer)
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-const productos = require('./clases/Productos.js');
+const producto = require('./clases/Productos.js');
 const carrito = require('./clases/Carrito.js');
 const objchat = require('./clases/Chat.js');
-const MySQLclient = require('./clases/MySQLclient.js');
-const SQLite3client = require('./clases/SQLite3client.js');
 
-const prod = new productos();
+const prod = new producto();
 const chat = new objchat();
 const carr = new carrito();
-const mysql = new MySQLclient();
-const sqlite = new SQLite3client();
-
-(async() => {
-    await mysql.inicializarTablas();
-    await sqlite.inicializarTablas();
-})();
-
 
 const productosApi = require('./api/productosApi.js');
 const carritoApi = require('./api/carritoApi.js');
@@ -70,8 +80,8 @@ app.get('/productos',(req, res) => {
 app.get('/modificar/:id',(req, res) => {
     (async() => {
         let buscado = await prod.getById(req.params.id);
-        if(buscado.length>0){
-            res.render('products_form.hbs',{product: buscado[0], id: req.params.id});
+        if(buscado){
+            res.render('products_form.hbs',{product: buscado, id: req.params.id});
         }else{
             res.redirect(`/productos`);
         }

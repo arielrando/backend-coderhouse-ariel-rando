@@ -7,7 +7,7 @@
             {{#if hayProductos}}
             <thead>
                 <tr>
-                <th scope="col">ID de producto</th>
+                <th scope="col">Codigo</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Precio</th>
                 <th scope="col">Imagen</th>
@@ -18,13 +18,13 @@
             <tbody>
                 {{#each carrito}}
                     <tr>
-                        <td>{{this.idProducto}}</td>
+                        <td>{{this.codigo}}</td>
                         <td>{{this.title}}</td>
                         <td>{{this.price}}</td>
                         <td><img src="{{this.thumbnail}}" alt="{{this.title}}" height="50"></td>
                         <td>{{this.cantidad}}</td>
                         <td>
-                            <button class="btn btn-danger btn-sm active" onclick="borrarProdCarrito({{this.idProducto}});" ><i class="fas fa-trash-alt"></i></button>
+                            <button class="btn btn-danger btn-sm active" onclick="borrarProdCarrito('{{this.idProducto}}');" ><i class="fas fa-trash-alt"></i></button>
                         </td>
                     </tr>
                 {{/each}}

@@ -7,7 +7,7 @@
             {{#if hayProductos}}
             <thead>
                 <tr>
-                <th scope="col">ID</th>
+                <th scope="col">Codigo</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Precio</th>
                 <th scope="col">Imagen</th>
@@ -18,18 +18,18 @@
             <tbody>
                 {{#each productList}}
                     <tr>
-                        <td>{{this.id}}</td>
+                        <td>{{this.codigo}}</td>
                         <td>{{this.nombre}}</td>
                         <td>{{this.precio}}</td>
                         <td><img src="{{this.foto}}" alt="{{this.nombre}}" height="50"></td>
                         <td>
                             <input type="number" id="cantidad_{{this.id}}" min="0" value="0" style="width:60px" class="form-inline" />
-                            <button class="btn btn-success btn-sm active" onclick="agregarCarrito({{this.id}});" >+</button>
+                            <button class="btn btn-success btn-sm active" onclick="agregarCarrito('{{this.id}}');" >+</button>
                         </td>
                         {{#if ../admin}}
                             <td>
                                 <a class="btn btn-primary btn-sm active" href="modificar/{{this.id}}" >Modificar</a> 
-                                <button class="btn btn-danger btn-sm active" onclick="borrarProd({{this.id}});" >Borrar</button>
+                                <button class="btn btn-danger btn-sm active" onclick="borrarProd('{{this.id}}');" >Borrar</button>
                             </td>
                         {{/if}}
                     </tr>

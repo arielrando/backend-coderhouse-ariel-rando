@@ -1,7 +1,8 @@
 module.exports = class Carrito {
     constructor(title='',price=0,thumbnail=''){
-        this.manejoArchivosAux = require('./ManejoArchivos.js');
-        this.dbFileText = 'carritos.txt';
+        let manejoArchivos = require('./manejadores/ManejoArchivos.js');
+        this.manejoArchivosAux = new manejoArchivos('carritos.txt');
+        this.dbFileText = './carritos.txt';
         this.moment = require('moment');  
         let productos = require('./Productos.js');
         this.prod = new productos;
@@ -46,10 +47,11 @@ module.exports = class Carrito {
                     result = [];
                     await Promise.all(test[index].productos.map(async (elementProducto) => {
                         let prodAux = await this.prod.getById(elementProducto.idProducto);
-                        if(prodAux.length>0){
-                            elementProducto.title = prodAux[0].nombre;
-                            elementProducto.price = prodAux[0].precio;
-                            elementProducto.thumbnail = prodAux[0].foto;
+                        if(prodAux){
+                            elementProducto.codigo = prodAux.codigo;
+                            elementProducto.title = prodAux.nombre;
+                            elementProducto.price = prodAux.precio;
+                            elementProducto.thumbnail = prodAux.foto;
                             result.push(elementProducto);
                         }
                     }));
@@ -67,7 +69,7 @@ module.exports = class Carrito {
                 producto.cantidad = 1;
             }
             let buscado = await this.prod.getById(producto.id);
-            if(buscado.length>0){
+            if(buscado){
                 let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
                 let result = null;
                 let index = null;
@@ -114,7 +116,7 @@ module.exports = class Carrito {
     async deleteProduct(carrito,producto){
         try{
             let buscado = await this.prod.getById(producto);
-            if(buscado.length>0){
+            if(buscado){
                 let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
                 let result = null;
                 let index = null;

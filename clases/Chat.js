@@ -1,9 +1,9 @@
 module.exports = class Chat {
     constructor(){
-        let options = require('../options/sqlite3.js');
+        let {optionsSqlite3} = require('../config.js');
         let knex = require('knex');
         
-        this.objKnex = knex(options);
+        this.objKnex = knex(optionsSqlite3);
     }
 
     async save(mensaje){

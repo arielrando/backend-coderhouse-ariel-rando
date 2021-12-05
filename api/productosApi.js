@@ -16,8 +16,8 @@ apiProductos.get('/',(req, res)=>{
 apiProductos.get('/:id',(req, res)=>{
     (async() => {
         let buscado = await prod.getById(req.params.id);
-        if(buscado.length>0){
-            res.send(JSON.stringify(buscado[0]));
+        if(buscado){
+            res.send(JSON.stringify(buscado));
         }else{
             res.send(`{"mensajeError":"No exite dicho producto"}`);
         }
@@ -29,8 +29,9 @@ apiProductos.post('/',(req, res)=>{
     if(admin){
         (async() => {
             let nuevo = await prod.save(req.body);
-            if(nuevo.length>0){
-                res.send(`{"mensajeExito":"Producto creado","itemNuevo":${nuevo[0]}}`);
+            if(nuevo){
+                console.log(nuevo);
+                res.send(`{"mensajeExito":"Producto creado","itemNuevo":"${nuevo}"}`);
             }else{
                 res.send(`{"mensajeError":"No se creo el producto"}`);
             }
@@ -59,7 +60,7 @@ apiProductos.delete('/:id',(req, res)=>{
     if(admin){
         (async() => {
             let buscado = await prod.getById(req.params.id);
-            if(buscado.length>0){
+            if(buscado){
                 let result = await prod.deleteById(req.params.id);
                 if(result){
                     res.send(`{"mensajeExito":"Producto borrado"}`);

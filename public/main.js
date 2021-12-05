@@ -62,7 +62,7 @@ const agregarCarrito = (id) =>{
         alert('La cantidad a agregar no puede ser 0!');
         return null;
     }
-    let body = '{ "id":'+id+',"cantidad":'+document.getElementById('cantidad_'+id).value+'}';
+    let body = '{ "id":"'+id+'","cantidad":'+document.getElementById('cantidad_'+id).value+'}';
     fetch("/api/carrito/"+document.getElementById('carritoId').value+"/productos", {method: "POST",headers: {"Content-Type": "application/json"},body: body})
     .then(response => response.text())
     .then(data => {

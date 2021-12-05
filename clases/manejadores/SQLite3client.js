@@ -1,14 +1,16 @@
 module.exports = class SQLite3client {
     constructor(){
-        let options = require('../options/sqlite3.js');
+        let {optionsSqlite3} = require('../../config.js');
         let knex = require('knex');
         
-        this.objKnex = knex(options);
+        this.objKnex = knex(optionsSqlite3);
     }
 
-    async inicializarTablas(){
+    static async inicializarTablas(){
         try{
-            let knexAux = this.objKnex;
+            let {optionsSqlite3} = require('../../config.js');
+            let knex = require('knex');
+            let knexAux = knex(optionsSqlite3);
             await knexAux.schema.hasTable('chats').then(async function(exists) {
                 if (!exists) {
                     await knexAux.schema.createTable('chats', function(table){

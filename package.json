@@ -8,6 +8,8 @@
     "express-handlebars": "^5.3.4",
     "knex": "^0.95.14",
     "moment": "^2.29.1",
+    "mongoose": "^6.0.14",
+    "mongoose-lean-virtuals": "^0.9.0",
     "mysql": "^2.18.1",
     "socket.io": "^4.3.1",
     "sqlite3": "^5.0.2"
