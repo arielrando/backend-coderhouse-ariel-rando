@@ -1,37 +1,61 @@
-module.exports = class Carrito {
-    constructor(title='',price=0,thumbnail=''){
-        let manejoArchivos = require('./manejadores/ManejoArchivos.js');
-        this.manejoArchivosAux = new manejoArchivos('carritos.txt');
-        this.dbFileText = './carritos.txt';
+const generalDao = require('./daos/generalDao.js');
+const {DBdefault} = require('../config.js');
+
+module.exports = class Carrito extends generalDao {
+    constructor(){
+        switch (DBdefault) {
+            case 'archivoTexto':
+                super('./DB/carritos.txt');
+            break;
+            case 'mysql':
+                super('carritos',true);
+            break;
+            case 'mongoDB':
+                const mongooseAux = require('mongoose');
+                const arrayProductos = new mongooseAux.Schema({
+                    idProducto: {type: String, required: true},
+                    cantidad: {type: Number, default: 0},
+                    fechaCreacion: {type: Date, default: Date.now}
+                });
+                let esquema = {
+                    fechaCreacion: {type: Date, default: Date.now},
+                    fechaModificacion: {type: Date, default: Date.now},
+                    productos: [arrayProductos]
+
+                };
+                super('carritos',esquema)
+            break;
+            case 'firebase':
+                super('carritos');
+            break;
+            case 'sqlite3':
+                super('carritos',true);
+            break;
+            default:
+                super('./DB/carritos.txt');
+            break;
+        }
         this.moment = require('moment');  
         let productos = require('./Productos.js');
         this.prod = new productos;
     }
 
-    async getAll(){
-        try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
-            return test;
-        }catch(err){
-            console.log('No se pudo leer el archivo de los carritos: ',err);
-        }
-    }
+    
 
     async create(){
         try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
             let carrito = {};
-            carrito.fecha = this.moment().format('DD/MM/YYYY HH:mm:ss');
             carrito.productos = [];
-            if(test && test.length>0){
-                carrito.id  = test[test.length-1].id+1;
-                test.push(carrito);
-            }else{
-                carrito.id = 1
-                test = [carrito];
+            if(DBdefault=='archivoTexto'){
+                carrito.fechaCreacion = this.moment().format('DD/MM/YYYY HH:mm:ss');
+                carrito.fechaModificacion = this.moment().format('DD/MM/YYYY HH:mm:ss');
             }
-            await this.manejoArchivosAux.grabarArchivoJson(this.dbFileText,test);
-            return carrito.id;
+            if(DBdefault=='firebase'){
+                carrito.fechaCreacion = Date();
+                carrito.fechaModificacion = Date();
+            }
+            let resultado = await this.save(carrito);
+            return resultado;
         }catch(err){
             console.log('No se pudo grabar el archivo de los carritos: ',err);
         }
@@ -39,23 +63,20 @@ module.exports = class Carrito {
 
     async getProductsById(num){
         try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
+            let test = await this.getById(num);
             let result = null;
             if(test){
-                let index = test.findIndex(x => x.id == num);
-                if(index != -1){
-                    result = [];
-                    await Promise.all(test[index].productos.map(async (elementProducto) => {
-                        let prodAux = await this.prod.getById(elementProducto.idProducto);
-                        if(prodAux){
-                            elementProducto.codigo = prodAux.codigo;
-                            elementProducto.title = prodAux.nombre;
-                            elementProducto.price = prodAux.precio;
-                            elementProducto.thumbnail = prodAux.foto;
-                            result.push(elementProducto);
-                        }
-                    }));
-                }     
+                result = [];
+                await Promise.all(test.productos.map(async (elementProducto) => {
+                    let prodAux = await this.prod.getById(elementProducto.idProducto);
+                    if(prodAux){
+                        elementProducto.codigo = prodAux.codigo;
+                        elementProducto.title = prodAux.nombre;
+                        elementProducto.price = prodAux.precio;
+                        elementProducto.thumbnail = prodAux.foto;
+                        result.push(elementProducto);
+                    }
+                }));
             }
             return result;
         }catch(err){
@@ -70,17 +91,7 @@ module.exports = class Carrito {
             }
             let buscado = await this.prod.getById(producto.id);
             if(buscado){
-                let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
-                let result = null;
-                let index = null;
-                if(test){
-                    test.forEach(function (element, i) {
-                        if(element.id==carrito){
-                            result = element;
-                            index = i;
-                        }
-                    });
-                }
+                let result = await this.getById(carrito);
                 if(result){
                     let indexProducto = result.productos.findIndex(x => x.idProducto === producto.id);
                     if(indexProducto!= -1){
@@ -91,17 +102,18 @@ module.exports = class Carrito {
                         productoNuevo.cantidad = producto.cantidad;
                         productoNuevo.fecha = this.moment().format('DD/MM/YYYY HH:mm:ss');
                         if(result.productos && result.productos.length>0){
-                            productoNuevo.id  = result.productos[result.productos.length-1].id+1;
                             result.productos.push(productoNuevo);
                             
                         }else{
-                            productoNuevo.id  = 1
                             result.productos = [productoNuevo];
                         }
                     }
-                    test[index] = result;
-                    await this.manejoArchivosAux.grabarArchivoJson(this.dbFileText,test);
-                    return {status:1, mensaje:"El producto "+producto.id+" fue agregado al carrito"+carrito}
+                    let resultado = await this.editById(carrito,result);
+                    if(resultado){
+                        return {status:1, mensaje:"El producto "+producto.id+" fue agregado al carrito"+carrito}
+                    }else{
+                        return {status:2, mensaje:"El carrito "+carrito+" no se pudo grabar"}
+                    }
                 }else{
                     return {status:2, mensaje:"El carrito "+carrito+" no existe"}
                 }
@@ -117,17 +129,7 @@ module.exports = class Carrito {
         try{
             let buscado = await this.prod.getById(producto);
             if(buscado){
-                let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
-                let result = null;
-                let index = null;
-                if(test){
-                    test.forEach(function (element, i) {
-                        if(element.id==carrito){
-                            result = element;
-                            index = i;
-                        }
-                    });
-                }
+                let result = await this.getById(carrito);
                 if(result){
                     let indexProducto = result.productos.findIndex(x => x.idProducto == producto);
                     if(indexProducto!= -1){
@@ -135,8 +137,7 @@ module.exports = class Carrito {
                     }else{
                         return {status:2, mensaje:"El producto "+producto+" no existe en el carrito "+carrito}
                     }
-                    test[index] = result;
-                    await this.manejoArchivosAux.grabarArchivoJson(this.dbFileText,test);
+                    this.editById(carrito,result);
                     return {status:1, mensaje:"El producto "+producto+" fue borrado del carrito"+carrito}
                 }else{
                     return {status:2, mensaje:"El carrito "+carrito+" no existe"}
@@ -147,41 +148,5 @@ module.exports = class Carrito {
         }catch(err){
             console.log('No se pudo agregar el producto ',producto,' al carrito',carrito,': ',err);
         }
-    }
-
-    async getById(num){
-        try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
-            let result = null;
-            if(test){
-                test.forEach(element => {
-                    if(element.id==num){
-                        result = element;
-                    }
-                });
-            }
-            return result;
-        }catch(err){
-            console.log('No se pudo buscar el carrito ',num,': ',err);
-        }
-    }
-
-    async deleteById(num){
-        try{
-            let test = await this.manejoArchivosAux.obtenerArchivoJson(this.dbFileText);
-
-            test.forEach(function (element, index) {
-                if(element.id==num){
-                    test.splice(index, 1);
-                }
-            });
-            await this.manejoArchivosAux.grabarArchivoJson(this.dbFileText,test);
-        }catch(err){
-            console.log('No se pudo borrar el carrito ',num,': ',err);
-        }
-    }
-
-    async deleteAll(){
-        await this.manejoArchivosAux.grabarArchivo(this.dbFileText,``);
     }
 }

@@ -7,8 +7,6 @@ const {Router} = express;
 
 const {DBdefault} = require('./config.js');
 (async() => {
-    const SQLite3client = require('./clases/manejadores/SQLite3client.js');
-    await SQLite3client.inicializarTablas();
     switch (DBdefault) {
         case 'archivoTexto':
             const ManejoArchivosclient = require('./clases/manejadores/ManejoArchivos.js');
@@ -17,6 +15,10 @@ const {DBdefault} = require('./config.js');
         case 'mysql':
             const MySQLclient = require('./clases/manejadores/MySQLclient.js');
             await MySQLclient.inicializarTablas();
+        break;
+        case 'sqlite3':
+            const SQLite3client = require('./clases/manejadores/SQLite3client.js');
+            await SQLite3client.inicializarTablas();
         break;
         case 'mongoDB':
             const MongoDBclient = require('./clases/manejadores/MongoDBclient.js');
@@ -113,9 +115,12 @@ io.on('connection', (socket) => {
     socket.on('grabarMensaje', data => {
         (async() => {
             data = JSON.parse(data);
+            if(DBdefault!='mysql'){
+                data.fecha = Date();
+            }
+            await chat.save(data);
             let ahora = moment().format('DD/MM/YYYY HH:mm:ss');
             data.fecha = ahora;
-            let nuevo = await chat.save(data);
             io.sockets.emit('mensajeNuevo', JSON.stringify(data));
           })();
     })

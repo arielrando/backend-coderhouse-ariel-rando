@@ -1,7 +1,7 @@
-const prodDao = require('./daos/generalDao.js');
+const generalDao = require('./daos/generalDao.js');
 const {DBdefault} = require('../config.js');
 
-module.exports = class Productos extends prodDao {
+module.exports = class Productos extends generalDao {
     constructor(){
         switch (DBdefault) {
             case 'archivoTexto':
@@ -27,8 +27,11 @@ module.exports = class Productos extends prodDao {
             case 'firebase':
                 super('productos');
             break;
+            case 'sqlite3':
+                super('productos');
+            break;
             default:
-        
+                super('./DB/productos.txt');
             break;
         }
     }

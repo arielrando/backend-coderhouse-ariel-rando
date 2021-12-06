@@ -1,10 +1,11 @@
 module.exports = class MySQLclient {
-    constructor(tabla){
+    constructor(tabla, combierteJson = false){
         let {optionsMysql} = require('../../config.js');
         let knex = require('knex');
         
         this.objKnex = knex(optionsMysql);
         this.tabla = tabla;
+        this.combierteJson = combierteJson;
     }
 
     static async inicializarTablas(){
@@ -33,6 +34,27 @@ module.exports = class MySQLclient {
                     await knexAux('productos').insert(productos);
                 }
             })
+            await knexAux.schema.hasTable('carritos').then(async function(exists) {
+                if (!exists) {
+                    await knexAux.schema.createTable('carritos', function(table){
+                        table.increments('id').primary();
+                        table.datetime('fechaCreacion').defaultTo(knexAux.fn.now());
+                        table.datetime('fechaModificacion').defaultTo(knexAux.fn.now());
+                        table.text ('productos').nullable();
+                    });
+                }
+            })
+
+            await knexAux.schema.hasTable('chats').then(async function(exists) {
+                if (!exists) {
+                    await knexAux.schema.createTable('chats', function(table){
+                        table.increments('id').primary();
+                        table.string('usuario',100).notNullable();
+                        table.text('mensaje').notNullable();
+                        table.datetime('fecha').defaultTo(knexAux.fn.now());
+                    })
+                }
+            })
             
         }catch(err){
             console.log('No se pudo creat la tabla de productos: ',err);
@@ -50,6 +72,13 @@ module.exports = class MySQLclient {
 
     async save(item){
         try{
+            if(this.combierteJson){
+                for (const property in item) {
+                    if((!!item[property]) && ((item[property].constructor === Array) || (item[property].constructor === Object))){
+                        item[property] = JSON.stringify(item[property]);
+                    }
+                }
+            }
             let resultado = await this.objKnex(this.tabla).insert(item, ['id']);
             if(resultado.length>0){
                 return resultado[0];
@@ -65,6 +94,13 @@ module.exports = class MySQLclient {
         try{
             let resultado = await this.objKnex(this.tabla).where('id',num).select('*');
             if(resultado.length>0){
+                if(this.combierteJson){
+                    for (const property in resultado[0]) {
+                        if(this.IsJsonString(resultado[0][property])){
+                            resultado[0][property] = JSON.parse(resultado[0][property]); 
+                        }
+                    }
+                }
                 return resultado[0];
             }else{
                 return null;
@@ -78,6 +114,13 @@ module.exports = class MySQLclient {
         try{
             let buscado = await this.objKnex(this.tabla).where('id',num).select('*');
             if(buscado.length>0){
+                if(this.combierteJson){
+                    for (const property in item) {
+                        if((!!item[property]) && ((item[property].constructor === Array) || (item[property].constructor === Object))){
+                            item[property] = JSON.stringify(item[property]);
+                        }
+                    }
+                }
                 let result = await this.objKnex.from(this.tabla).where('id', num).update(item);
                 if(result){
                     item.id = num;
@@ -108,5 +151,14 @@ module.exports = class MySQLclient {
 
     async deleteAll(){
         await this.objKnex(this.tabla).truncate();
+    }
+
+    IsJsonString(str) {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
     }
 }

@@ -21,7 +21,7 @@ module.exports = class Firebaseclient {
             let {optionsFirebase} = require('../../config.js');
             if (!admin.apps.length) {
                 admin.initializeApp({
-                    credential: this.admin.credential.cert(optionsFirebase.conexion)
+                    credential: admin.credential.cert(optionsFirebase.conexion)
                 });
             }else {
                 admin.app(); 

@@ -1,23 +1,26 @@
 const {DBdefault} = require('../../config.js');
 
-let productosDao;
+let generalDao;
 
 switch (DBdefault) {
     case 'archivoTexto':
-        productosDao =  require("../manejadores/ManejoArchivos.js");
+        generalDao =  require("../manejadores/ManejoArchivos.js");
     break;
     case 'mysql':
-        productosDao = require("../manejadores/MySQLclient.js");
+        generalDao = require("../manejadores/MySQLclient.js");
+    break;
+    case 'sqlite3':
+        generalDao = require("../manejadores/SQLite3client.js");
     break;
     case 'mongoDB':
-        productosDao = require("../manejadores/MongoDBclient.js");
+        generalDao = require("../manejadores/MongoDBclient.js");
     break;
     case 'firebase':
-        productosDao = require("../manejadores/Firebaseclient.js");
+        generalDao = require("../manejadores/Firebaseclient.js");
     break;
     default:
-        productosDao =  require("../manejadores/ManejoArchivos.js");
+        generalDao =  require("../manejadores/ManejoArchivos.js");
     break;
 }
 
-module.exports = productosDao;
+module.exports = generalDao;

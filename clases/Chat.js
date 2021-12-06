@@ -1,17 +1,33 @@
-module.exports = class Chat {
-    constructor(){
-        let {optionsSqlite3} = require('../config.js');
-        let knex = require('knex');
-        
-        this.objKnex = knex(optionsSqlite3);
-    }
+const generalDao = require('./daos/generalDao.js');
+const {DBdefault} = require('../config.js');
 
-    async save(mensaje){
-        try{
-            await this.objKnex('chats').insert(mensaje);
-            return null;
-        }catch(err){
-            console.log('No se pudo grabar el chat en la base de datos: ',err);
+module.exports = class Chat extends generalDao{
+    constructor(){
+        switch (DBdefault) {
+            case 'archivoTexto':
+                super('./DB/chats.txt');
+            break;
+            case 'mysql':
+                super('chats');
+            break;
+            case 'mongoDB':
+                let esquema = {
+                    usuario: {type: String, required: true},
+                    fecha: {type: Date, default: Date.now},
+                    mensaje: {type: String, required: true}
+
+                };
+                super('chats',esquema)
+            break;
+            case 'firebase':
+                super('chats');
+            break;
+            case 'sqlite3':
+                super('chats');
+            break;
+            default:
+                super('./DB/chats.txt');
+            break;
         }
     }
 }
