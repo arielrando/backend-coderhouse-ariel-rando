@@ -1,20 +1,29 @@
-const generalDao = require('./daos/generalDao.js');
+const chatDao = require('./daos/chatDao.js');
 const {DBdefault} = require('../config.js');
 
-module.exports = class Chat extends generalDao{
+module.exports = class Chat extends chatDao{
     constructor(){
         switch (DBdefault) {
             case 'archivoTexto':
                 super('./DB/chats.txt');
             break;
             case 'mysql':
-                super('chats');
+                super('./DB/chats.txt');
             break;
             case 'mongoDB':
+                const mongooseAux = require('mongoose');
+                const esquemaAutor = new mongooseAux.Schema({
+                    mail: {type: String, required: true},
+                    nombre: {type: String},
+                    apellido: {type: String},
+                    edad: {type: Number},
+                    alias: {type: String},
+                    avatar: {type: String}
+                });
                 let esquema = {
-                    usuario: {type: String, required: true},
                     fecha: {type: Date, default: Date.now},
-                    mensaje: {type: String, required: true}
+                    mensaje: {type: String, required: true},
+                    autor: {type: esquemaAutor, require: true}
 
                 };
                 super('chats',esquema)
@@ -23,7 +32,7 @@ module.exports = class Chat extends generalDao{
                 super('chats');
             break;
             case 'sqlite3':
-                super('chats');
+                super('./DB/chats.txt');
             break;
             default:
                 super('./DB/chats.txt');

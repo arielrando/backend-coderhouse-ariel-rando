@@ -1,4 +1,8 @@
 const moment = require('moment');  
+const normalizr = require('normalizr');
+const normalize = normalizr.normalize;
+const schemaNormalizr = normalizr.schema;
+
 const express = require('express');
 const handlebars = require("express-handlebars");
 const { Server: HttpServer } = require('http');
@@ -51,6 +55,7 @@ const chat = new objchat();
 const carr = new carrito();
 
 const productosApi = require('./api/productosApi.js');
+const productoTestsApi = require('./api/productosTestApi.js');
 const carritoApi = require('./api/carritoApi.js');
 
 app.use(express.static('./public'));
@@ -84,6 +89,17 @@ app.get('/productos',(req, res) => {
       })();
 })
 
+app.get('/productos-test',(req, res) => {
+    (async() => {
+        const productosFalsos = prod.getRandoms();
+
+        if(!carritoId){
+            carritoId = await carr.create();
+        }
+        res.render('products_list.hbs',{productList: productosFalsos, hayProductos: true,  admin: false, carritoId: carritoId, test:true});
+      })();
+})
+
 app.get('/modificar/:id',(req, res) => {
     (async() => {
         let buscado = await prod.getById(req.params.id);
@@ -93,7 +109,6 @@ app.get('/modificar/:id',(req, res) => {
             res.redirect(`/productos`);
         }
       })();
-    
 })
 
 app.get('/carrito',(req, res) => {
@@ -115,14 +130,26 @@ io.on('connection', (socket) => {
     socket.on('grabarMensaje', data => {
         (async() => {
             data = JSON.parse(data);
-            if(DBdefault!='mysql'){
-                data.fecha = Date();
-            }
+            data.fecha = Date();
             await chat.save(data);
             let ahora = moment().format('DD/MM/YYYY HH:mm:ss');
             data.fecha = ahora;
             io.sockets.emit('mensajeNuevo', JSON.stringify(data));
           })();
+    })
+
+    socket.on('recuperarMensajes',data  => {
+        (async() => {
+            let todos = await chat.getAll();
+            if(todos.length>0){
+                const schemaAutor = new schemaNormalizr.Entity('autor',{},{idAttribute:'mail'});
+                const schemaMensaje = new schemaNormalizr.Entity('mensaje',{autor: schemaAutor});
+                const schemaMensajes = new schemaNormalizr.Entity('mensajes',{mensajes: [schemaMensaje]});
+    
+                const mensajes = normalize({id:'999',mensajes:todos},schemaMensajes);
+                socket.emit('mensajesAnteriores',mensajes);
+            }
+        })();
     })
   
     socket.on('notificacion', data => {
@@ -131,6 +158,7 @@ io.on('connection', (socket) => {
 });
 
 app.use('/api/productos', productosApi);
+app.use('/api/productos-test', productoTestsApi);
 app.use('/api/carrito', carritoApi);
 
 app.use((req, res, next) => {

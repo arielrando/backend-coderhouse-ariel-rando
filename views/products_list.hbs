@@ -1,5 +1,5 @@
 <input type="hidden" id="carritoId" value="{{carritoId}}"/>
-<div class="row" style="height:50px;"><h2>Lista de productos</h2></div>
+<div class="row" style="height:50px;"><h2>Lista de productos{{#if test}} <span style="color: crimson; font-family: 'Comic Sans MS', cursive, sans-serif;">TEST</span> {{/if}}</h2></div>
 <div class="row">
     <div class="col-sm-2"></div>
     <div class="col-sm-8">
@@ -73,11 +73,11 @@
 </div>
 {{/if}}
 <div style="height:50px;">
-    <h2>Caja de chat</h2>
+    <h2>Caja de chat (Compresión:<span id='compresion_chat'>100</span>%)</h2>
 </div>
 <div class="row">
     <div class="col-sm-2"></div>
-    <div class="col-sm-8">
+    <div class="col-sm-4">
         <div class="chat">
             <div class="chat-history border border-secondary" id="chat-history" >
                 <ul id="cajaChat">
@@ -85,14 +85,32 @@
                 </ul>
             </div> 
             <br>
-            <span>Usuario:</span> 
-            <input class="form-control" type="text" name="usuario" id="usuario" placeholder="E-mail"/>
+            
+        </div> 
+    </div>
+    <div class="col-sm-4">
+        <label for="mailMsj">E-Mail:</label>
+            <input class="form-control" type="text" name="mailMsj" id="mailMsj" placeholder="E-Mail"/>
+            <br>
+            <label for="nombreMsj">Nombre:</label>
+            <input class="form-control" type="text" name="nombreMsj" id="nombreMsj" placeholder="Nombre"/>
+            <br>
+            <label for="apellidoMsj">Apellido:</label>
+            <input class="form-control" type="text" name="apellidoMsj" id="apellidoMsj" placeholder="Apellido"/>
+            <br>
+            <label for="edadMsj">Edad:</label>
+            <input class="form-control" type="number" name="edadMsj" id="edadMsj" placeholder="Edad"/>
+            <br>
+            <label for="aliasMsj">Alias:</label>
+            <input class="form-control" type="text" name="aliasMsj" id="aliasMsj" placeholder="Alias"/>
+            <br>
+            <label for="avatarMsj">Avatar:</label>
+            <input class="form-control" type="text" name="avatarMsj" id="avatarMsj" placeholder="Avatar"/>
             <br>
             <span>Mensaje a enviar:</span> 
             <br>
             <textarea class="form-control" name="mensaje" id="mensaje" placeholder="Mensaje" rows="2" cols="50"></textarea>
             <button class="btn btn-primary btn-sm active" onclick="enviar();">Enviar</button>
-        </div> 
     </div>
     <div class="col-sm-2"></div>
 </div>

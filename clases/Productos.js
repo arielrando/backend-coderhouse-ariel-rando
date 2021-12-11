@@ -34,5 +34,21 @@ module.exports = class Productos extends generalDao {
                 super('./DB/productos.txt');
             break;
         }
+        this.faker = require('faker');
+        this.faker.locale = 'es'
+    }
+
+    getRandoms(cant = 5){
+        if(!cant || isNaN(cant) || cant == 0){
+            cant = 5;
+        }
+
+        const {  commerce, datatype, image } = this.faker;
+        let todos = new Array();
+        for (let i = 0; i < cant; i++) {
+            todos.push({id:datatype.number(), codigo: datatype.number(), nombre: commerce.productName(), precio: commerce.price(), foto:image.image()});
+        }
+
+        return todos;
     }
 }
