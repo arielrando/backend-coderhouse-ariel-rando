@@ -224,5 +224,28 @@ window.onload = function() {
                 });
         })
     }
+    const formLogin = document.getElementById('loginForm');
+    if(formLogin){
+        formLogin.addEventListener('submit', e =>{
+            e.preventDefault();
+            if(!document.getElementById('usuarioLogin').value || /^\s*$/.test(document.getElementById('usuarioLogin').value)){
+                alert('El campo usuario no puede estar vacio!');
+                return null;
+            }
+
+            let body = '{ "usuario":"'+document.getElementById('usuarioLogin').value+'"}';
+            fetch("/login", {method: "POST",headers: {"Content-Type": "application/json"},body: body})
+                .then(response => response.text())
+                .then(data => {
+                    const json = JSON.parse(data);
+                    if(!json.mensajeError){
+                        window.location.replace("/productos");
+                    }else{
+                        console.log(json.mensajeError);
+                        alert(`no se pudo loguear al cliente`);
+                    }
+                });
+        })
+    }
     socket.emit('recuperarMensajes');
   };

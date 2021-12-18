@@ -4,35 +4,17 @@ const normalize = normalizr.normalize;
 const schemaNormalizr = normalizr.schema;
 
 const express = require('express');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
 const handlebars = require("express-handlebars");
 const { Server: HttpServer } = require('http');
 const { Server: IOServer } = require('socket.io');
 const {Router} = express;
 
-const {DBdefault} = require('./config.js');
+const {DBdefault, inicializarTablas} = require('./config.js');
 (async() => {
-    switch (DBdefault) {
-        case 'archivoTexto':
-            const ManejoArchivosclient = require('./clases/manejadores/ManejoArchivos.js');
-            await ManejoArchivosclient.inicializarTablas();
-        break;
-        case 'mysql':
-            const MySQLclient = require('./clases/manejadores/MySQLclient.js');
-            await MySQLclient.inicializarTablas();
-        break;
-        case 'sqlite3':
-            const SQLite3client = require('./clases/manejadores/SQLite3client.js');
-            await SQLite3client.inicializarTablas();
-        break;
-        case 'mongoDB':
-            const MongoDBclient = require('./clases/manejadores/MongoDBclient.js');
-            await MongoDBclient.inicializarTablas();
-        break;
-        case 'firebase':
-            const Firebaseclient = require('./clases/manejadores/Firebaseclient.js');
-            await Firebaseclient.inicializarTablas();
-        break;
-    }
+    await inicializarTablas(DBdefault);
 })();
 
 global.Ruta = Router;
@@ -46,17 +28,14 @@ const io = new IOServer(httpServer)
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-const producto = require('./clases/Productos.js');
-const carrito = require('./clases/Carrito.js');
 const objchat = require('./clases/Chat.js');
 
-const prod = new producto();
 const chat = new objchat();
-const carr = new carrito();
 
 const productosApi = require('./api/productosApi.js');
 const productoTestsApi = require('./api/productosTestApi.js');
 const carritoApi = require('./api/carritoApi.js');
+const indexView = require('./index_views.js');
 
 app.use(express.static('./public'));
 
@@ -66,65 +45,41 @@ app.engine(
         extname: ".hbs",
         defaultLayout: "index.hbs",
         layoutsDir: __dirname + "/views/layouts",
-        partialsDir: __dirname + "views/partials/"
+        partialsDir: __dirname + "/views/partials/"
     })
 );
 
-app.get('/',(req, res) => {
-    res.redirect(`/productos`);
-})
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: 'mongodb+srv://admin:1234@cluster0.8mbng.mongodb.net/mibase?retryWrites=true&w=majority',
+        mongoOptions: advancedOptions
+    }),
+    secret: 'codercasa',
+    resave: false,
+    saveUninitialized: false ,
+    cookie: {
+        maxAge: 60000*10
+    } 
+}));
 
-app.get('/productos',(req, res) => {
-    (async() => {
-        let todos = await prod.getAll();
-        let hayProductos = false;
-        let mensaje = null;
-        if(todos.length>0){
-            hayProductos = true;
-        }
-        if(!carritoId){
-            carritoId = await carr.create();
-        }
-        res.render('products_list.hbs',{productList: todos, hayProductos: hayProductos, mensaje: mensaje, admin: admin, carritoId: carritoId});
-      })();
-})
-
-app.get('/productos-test',(req, res) => {
-    (async() => {
-        const productosFalsos = prod.getRandoms();
-
-        if(!carritoId){
-            carritoId = await carr.create();
-        }
-        res.render('products_list.hbs',{productList: productosFalsos, hayProductos: true,  admin: false, carritoId: carritoId, test:true});
-      })();
-})
-
-app.get('/modificar/:id',(req, res) => {
-    (async() => {
-        let buscado = await prod.getById(req.params.id);
-        if(buscado){
-            res.render('products_form.hbs',{product: buscado, id: req.params.id});
-        }else{
-            res.redirect(`/productos`);
-        }
-      })();
-})
-
-app.get('/carrito',(req, res) => {
-    (async() => {
-        let carrito = await carr.getProductsById(carritoId);
-        let hayProductos = false;
-        if(carrito && carrito.length>0){
-            hayProductos = true;
-        }
-        res.render('products_carrito.hbs',{carrito: carrito, carritoId:carritoId, hayProductos: hayProductos});
-      })();
-})
-
-app.get('/instrucciones_api',(req, res) => {
-    res.render('instrucciones_api.hbs');
+app.post('/login',(req, res)=>{
+    if (!req.session.usuario) {
+        req.session.usuario=req.body.usuario;
+    }
+    res.send(`{"mensajeExito":"usuario logueado","usuario":"${req.session.usuario}"}`);
 });
+
+app.get('/logout', (req, res) => {
+    if (req.session.usuario) {
+        let usuario = req.session.usuario;
+        req.session.destroy(err => {
+            if (!err) res.render('logout.hbs',{usuario: usuario});
+            else res.send(`{"mensajeError":"no se pudo deslogear al usuario"}`)
+        })
+    }else{
+        res.redirect(`/productos`);
+    }
+})
 
 io.on('connection', (socket) => { 
     socket.on('grabarMensaje', data => {
@@ -157,6 +112,7 @@ io.on('connection', (socket) => {
     })
 });
 
+app.use('/',indexView);
 app.use('/api/productos', productosApi);
 app.use('/api/productos-test', productoTestsApi);
 app.use('/api/carrito', carritoApi);

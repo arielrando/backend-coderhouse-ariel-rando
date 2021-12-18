@@ -38,10 +38,38 @@ const optionsFirebase = {
   }
 }
 
+ function inicializarTablas(db){
+  (async() => {
+    switch (db) {
+        case 'archivoTexto':
+            const ManejoArchivosclient = require('./clases/manejadores/ManejoArchivos.js');
+            await ManejoArchivosclient.inicializarTablas();
+        break;
+        case 'mysql':
+            const MySQLclient = require('./clases/manejadores/MySQLclient.js');
+            await MySQLclient.inicializarTablas();
+        break;
+        case 'sqlite3':
+            const SQLite3client = require('./clases/manejadores/SQLite3client.js');
+            await SQLite3client.inicializarTablas();
+        break;
+        case 'mongoDB':
+            const MongoDBclient = require('./clases/manejadores/MongoDBclient.js');
+            await MongoDBclient.inicializarTablas();
+        break;
+        case 'firebase':
+            const Firebaseclient = require('./clases/manejadores/Firebaseclient.js');
+            await Firebaseclient.inicializarTablas();
+        break;
+    }
+})();
+}
+
 module.exports = {
     DBdefault,
     optionsMysql,
     optionsSqlite3,
     optionsMongoDB,
-    optionsFirebase
+    optionsFirebase,
+    inicializarTablas
 };
