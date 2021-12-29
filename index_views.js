@@ -16,7 +16,7 @@ indexView.get('/productos',(req, res) => {
         if(!carritoId){
             carritoId = await carr.create();
         }
-        res.render('products_list.hbs',{productList: todos, hayProductos: hayProductos, usuarioLogin: req.session.usuario, admin: admin, carritoId: carritoId});
+        res.render('products_list.hbs',{productList: todos, hayProductos: hayProductos, usuarioLogin: req.user, admin: admin, carritoId: carritoId});
       })();
 })
 
@@ -27,7 +27,7 @@ indexView.get('/productos-test',(req, res) => {
         if(!carritoId){
             carritoId = await carr.create();
         }
-        res.render('products_list.hbs',{productList: productosFalsos, hayProductos: true, usuarioLogin: req.session.usuario,  admin: false, carritoId: carritoId, test:true});
+        res.render('products_list.hbs',{productList: productosFalsos, hayProductos: true, usuarioLogin: req.user,  admin: false, carritoId: carritoId, test:true});
       })();
 })
 
@@ -35,7 +35,7 @@ indexView.get('/modificar/:id',(req, res) => {
     (async() => {
         let buscado = await prod.getById(req.params.id);
         if(buscado){
-            res.render('products_form.hbs',{product: buscado, id: req.params.id, usuarioLogin: req.session.usuario});
+            res.render('products_form.hbs',{product: buscado, id: req.params.id, usuarioLogin: req.user});
         }else{
             res.redirect(`/productos`);
         }
@@ -49,12 +49,12 @@ indexView.get('/carrito',(req, res) => {
         if(carrito && carrito.length>0){
             hayProductos = true;
         }
-        res.render('products_carrito.hbs',{carrito: carrito, carritoId:carritoId, hayProductos: hayProductos, usuarioLogin: req.session.usuario});
+        res.render('products_carrito.hbs',{carrito: carrito, carritoId:carritoId, hayProductos: hayProductos, usuarioLogin: req.user});
       })();
 })
 
 indexView.get('/instrucciones_api',(req, res) => {
-    res.render('instrucciones_api.hbs');
+    res.render('instrucciones_api.hbs',{usuarioLogin: req.user});
 });
 
 module.exports = indexView;

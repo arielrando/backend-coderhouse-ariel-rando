@@ -77,6 +77,35 @@ module.exports = class MongoDBclient {
         }
     }
 
+    async getCustom(arrayCustom, cantResultados = 0){
+        try{
+            let query = {};
+            if(arrayCustom.length>0){
+                query = {
+                    '$and': []
+                };
+                if(arrayCustom.length) {
+                    for (let i = 0; i < arrayCustom.length; i++) {
+                        let aux = {};
+                        aux[arrayCustom[i].fieldName] = arrayCustom[i].value;
+                        query['$and'].push(aux);
+                    }
+                };
+            }
+            
+            let resultado = await this.modeloTabla.find(query);
+            if(isNaN(cantResultados)){
+                throw "La cantidad de resultados debe ser un numero valido" ;
+            }
+            if(cantResultados>0){
+                resultado = resultado.slice(0, cantResultados);
+            }
+            return resultado;
+        }catch(err){
+            console.log('No se pudo buscar el dato ',JSON.stringify(arrayCustom),' de la tabla ',this.tabla,': ',err);
+        }
+    }
+
     async getAll(){
         try{
             let resultado = await this.modeloTabla.find().lean({ virtuals: true });

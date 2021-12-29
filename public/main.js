@@ -225,27 +225,45 @@ window.onload = function() {
         })
     }
     const formLogin = document.getElementById('loginForm');
-    if(formLogin){
-        formLogin.addEventListener('submit', e =>{
+    const formLoginSubmit = document.getElementById('loginFormSubmit');
+    if(formLoginSubmit){
+        formLoginSubmit.addEventListener('click', e =>{
             e.preventDefault();
-            if(!document.getElementById('usuarioLogin').value || /^\s*$/.test(document.getElementById('usuarioLogin').value)){
+            if(!document.getElementById('username').value || /^\s*$/.test(document.getElementById('username').value)){
                 alert('El campo usuario no puede estar vacio!');
                 return null;
             }
 
-            let body = '{ "usuario":"'+document.getElementById('usuarioLogin').value+'"}';
-            fetch("/login", {method: "POST",headers: {"Content-Type": "application/json"},body: body})
-                .then(response => response.text())
-                .then(data => {
-                    const json = JSON.parse(data);
-                    if(!json.mensajeError){
-                        window.location.replace("/productos");
-                    }else{
-                        console.log(json.mensajeError);
-                        alert(`no se pudo loguear al cliente`);
-                    }
-                });
+            if(!document.getElementById('password').value || /^\s*$/.test(document.getElementById('password').value)){
+                alert('El campo contraseña no puede estar vacio!');
+                return null;
+            }
+            formLogin.submit();
         })
     }
-    socket.emit('recuperarMensajes');
+    const formRegistroUsuario = document.getElementById('registroUsuario');
+    const formRegistroUsuarioSubmit = document.getElementById('registroUsuarioSubmit');
+    if(formRegistroUsuarioSubmit){
+        formRegistroUsuarioSubmit.addEventListener('click', e =>{
+            e.preventDefault();
+            console.log(document.getElementById('unsernameRegistro').value);
+            if(!document.getElementById('unsernameRegistro').value || /^\s*$/.test(document.getElementById('unsernameRegistro').value)){
+                alert('El E-mail no puede estar vacio!');
+                return null;
+            }
+            if(!document.getElementById('passwordRegistro').value || /^\s*$/.test(document.getElementById('passwordRegistro').value)){
+                alert('La contraseña no puede estar vacia!');
+                return null;
+            }
+            if(!document.getElementById('repass').value || isNaN(document.getElementById('repass').value) || document.getElementById('repass').value!=document.getElementById('passwordRegistro').value){
+                alert('Las contraseñas deben coincidir!');
+                return null;
+            }
+            formRegistroUsuario.submit();
+        })
+    }
+    const cajaChat = document.getElementById('chat-history');
+    if(cajaChat){
+        socket.emit('recuperarMensajes');
+    }
   };
