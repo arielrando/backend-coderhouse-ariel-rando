@@ -1,9 +1,9 @@
+require('dotenv').config();
 const generalDao = require('./daos/generalDao.js');
-const {DBdefault} = require('../config.js');
 
 module.exports = class Productos extends generalDao {
     constructor(){
-        switch (DBdefault) {
+        switch (process.env.DBdefault) {
             case 'archivoTexto':
                 super('./DB/productos.txt');
             break;

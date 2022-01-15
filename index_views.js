@@ -57,4 +57,8 @@ indexView.get('/instrucciones_api',(req, res) => {
     res.render('instrucciones_api.hbs',{usuarioLogin: req.user});
 });
 
+indexView.get('/info',(req, res) => {
+    res.render('info.hbs',{argv:JSON.stringify(process.argv.slice(2)),ruta:process.cwd(),memory:JSON.stringify(process.memoryUsage()),process:process});
+});
+
 module.exports = indexView;

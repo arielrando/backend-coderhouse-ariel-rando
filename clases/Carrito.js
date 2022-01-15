@@ -1,9 +1,9 @@
+require('dotenv').config();
 const generalDao = require('./daos/generalDao.js');
-const {DBdefault} = require('../config.js');
 
 module.exports = class Carrito extends generalDao {
     constructor(){
-        switch (DBdefault) {
+        switch (process.env.DBdefault) {
             case 'archivoTexto':
                 super('./DB/carritos.txt');
             break;
@@ -46,11 +46,11 @@ module.exports = class Carrito extends generalDao {
         try{
             let carrito = {};
             carrito.productos = [];
-            if(DBdefault=='archivoTexto'){
+            if(process.env.DBdefault=='archivoTexto'){
                 carrito.fechaCreacion = this.moment().format('DD/MM/YYYY HH:mm:ss');
                 carrito.fechaModificacion = this.moment().format('DD/MM/YYYY HH:mm:ss');
             }
-            if(DBdefault=='firebase'){
+            if(process.env.DBdefault=='firebase'){
                 carrito.fechaCreacion = Date();
                 carrito.fechaModificacion = Date();
             }

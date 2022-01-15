@@ -1,8 +1,8 @@
-const {DBdefault} = require('../../config.js');
+require('dotenv').config();
 
 let chatDao;
 
-switch (DBdefault) {
+switch (process.env.DBdefault) {
     case 'archivoTexto':
         chatDao =  require("../manejadores/ManejoArchivos.js");
     break;

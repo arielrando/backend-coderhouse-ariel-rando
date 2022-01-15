@@ -246,7 +246,6 @@ window.onload = function() {
     if(formRegistroUsuarioSubmit){
         formRegistroUsuarioSubmit.addEventListener('click', e =>{
             e.preventDefault();
-            console.log(document.getElementById('unsernameRegistro').value);
             if(!document.getElementById('unsernameRegistro').value || /^\s*$/.test(document.getElementById('unsernameRegistro').value)){
                 alert('El E-mail no puede estar vacio!');
                 return null;
@@ -255,7 +254,7 @@ window.onload = function() {
                 alert('La contraseña no puede estar vacia!');
                 return null;
             }
-            if(!document.getElementById('repass').value || isNaN(document.getElementById('repass').value) || document.getElementById('repass').value!=document.getElementById('passwordRegistro').value){
+            if(!document.getElementById('repass').value || String(document.getElementById('repass').value)!=String(document.getElementById('passwordRegistro').value)){
                 alert('Las contraseñas deben coincidir!');
                 return null;
             }
