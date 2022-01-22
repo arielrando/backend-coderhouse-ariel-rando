@@ -1,0 +1,45 @@
+* Tomando con base el proyecto que vamos realizando, agregar un parámetro más en la ruta de comando que permita ejecutar al servidor en modo fork o cluster. Dicho parámetro será 'FORK' en el primer caso y 'CLUSTER' en el segundo, y de no pasarlo, el servidor iniciará en modo fork.
+
+node index.js -p 8080
+
+node index.js -p 8080 -m CLUSTER
+
+* Ejecutar el servidor (modos FORK y CLUSTER) con nodemon verificando el número de procesos tomados por node.
+
+nodemon index.js -p 8080
+
+nodemon index.js -p 8080 -m CLUSTER
+
+* Ejecutar el servidor (con los parámetros adecuados) utilizando Forever, verificando su correcta operación. Listar los procesos por Forever y por sistema operativo.
+
+forever start index.js -p 8080
+
+forever list
+
+* Ejecutar el servidor (con los parámetros adecuados: modo FORK) utilizando PM2 en sus modos modo fork y cluster. Listar los procesos por PM2 y por sistema operativo.
+
+pm2 start index.js --name='fork1' -- -p 8080
+
+pm2 start index.js --name='cluster1' -i max -- -p 8081
+
+pm2 list
+
+* Tanto en Forever como en PM2 permitir el modo escucha, para que la actualización del código del servidor se vea reflejado inmediatamente en todos los procesos.
+
+forever -w start index.js -p 8080
+
+pm2 start index.js --name='fork1' --watch -- -p 8081
+
+* SERVIDORES PARA NGINX
+
+pm2 start index.js --name='fork1' --watch -- -p 8080
+
+pm2 start index.js --name='cluster1' --watch -- -p 8081 -m CLUSTER
+
+pm2 start index.js --name='fork2' --watch -- -p 8082
+
+pm2 start index.js --name='fork3' --watch -- -p 8083
+
+pm2 start index.js --name='fork4' --watch -- -p 8084
+
+pm2 start index.js --name='fork5' --watch -- -p 8085
