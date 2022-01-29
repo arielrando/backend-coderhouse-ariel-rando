@@ -1,5 +1,6 @@
 require('dotenv').config();
 const generalDao = require('./daos/generalDao.js');
+const fetch = require('node-fetch');
 
 module.exports = class Productos extends generalDao {
     constructor(){
@@ -49,6 +50,24 @@ module.exports = class Productos extends generalDao {
             todos.push({id:datatype.number(), codigo: datatype.number(), nombre: commerce.productName(), precio: commerce.price(), foto:image.image()});
         }
 
+        return todos;
+    }
+
+    async getAllCustom(){
+        let todos = await this.getAll();
+        for(let i=0; i<todos.length; i++) {
+            try {
+                let response = await fetch(todos[i].foto, {
+                    method: 'HEAD'
+                });
+                if(!response.ok){
+                    todos[i].foto = 'noExiste.jpg'
+                }
+            } catch (error) {
+                todos[i].foto = 'noExiste.jpg'
+            }
+            
+        }
         return todos;
     }
 }

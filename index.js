@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cluster = require('cluster')
 const {Router} = express;
+const logger = require('./clases/logger.js');
 
 const {inicializarTablas} = require('./config.js');
 (async() => {
@@ -50,6 +51,13 @@ if (cluster.isPrimary && argumentos.modo=='CLUSTER') {
 
     const {app, httpServer, io} = require('./clases/app.js');
 
+    function myMiddleware (req, res, next) {
+        logger.info(`ruta ${req.url} método ${req.method}`);
+        next()
+     }
+     
+     app.use(myMiddleware)
+
     app.use('/',indexView);
     app.use('/api/productos', productosApi);
     app.use('/api/productos-test', productoTestsApi);
@@ -58,9 +66,10 @@ if (cluster.isPrimary && argumentos.modo=='CLUSTER') {
     app.use('/users', usersApi);
 
     app.use((req, res, next) => {
+        logger.warn(`ruta ${req.url} método ${req.method} no existe`);
         res.send(`{ "error" : -1, "descripcion": "ruta ${req.url} método ${req.method} no existe"}`);
     });
 
-    httpServer.listen(argumentos.puerto, () => console.log(`SERVER ON ${argumentos.puerto} - PID ${process.pid} - ${new Date().toLocaleString()}`)) // El servidor funcionando en el puerto 3000
-    httpServer.on('error', (err) =>console.log(err));
+    httpServer.listen(argumentos.puerto, () => logger.info(`SERVER ON ${argumentos.puerto} - PID ${process.pid} - ${new Date().toLocaleString()}`)) // El servidor funcionando en el puerto 3000
+    httpServer.on('error', (err) =>logger.error(err));
 }

@@ -1,6 +1,8 @@
 const indexView = new Ruta();
 const producto = require('./clases/Productos.js');
 const carrito = require('./clases/Carrito.js');
+const compression = require('compression');
+const { json } = require('express');
 
 const prod = new producto();
 const carr = new carrito();
@@ -11,7 +13,7 @@ indexView.get('/',(req, res) => {
 
 indexView.get('/productos',(req, res) => {
     (async() => {
-        let todos = await prod.getAll();
+        let todos = await prod.getAllCustom();
         let hayProductos = (todos.length>0)?true:false;
         if(!carritoId){
             carritoId = await carr.create();
@@ -58,6 +60,12 @@ indexView.get('/instrucciones_api',(req, res) => {
 });
 
 indexView.get('/info',(req, res) => {
+    const objJson = {argv:JSON.stringify(process.argv.slice(2)),ruta:process.cwd(),memory:JSON.stringify(process.memoryUsage()),process:process}
+    console.log(objJson);
+    res.render('info.hbs',objJson);
+});
+
+indexView.get('/infoZip', compression(), (req, res) => {
     res.render('info.hbs',{argv:JSON.stringify(process.argv.slice(2)),ruta:process.cwd(),memory:JSON.stringify(process.memoryUsage()),process:process});
 });
 

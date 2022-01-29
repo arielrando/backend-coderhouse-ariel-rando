@@ -1,6 +1,7 @@
 const apiProductos = new Ruta();
 const producto = require('../clases/productos.js');
 const prod = new producto();
+const logger = require('../clases/logger.js');
 
 apiProductos.get('/',(req, res)=>{
     (async() => {
@@ -32,10 +33,12 @@ apiProductos.post('/',(req, res)=>{
             if(nuevo){
                 res.send(`{"mensajeExito":"Producto creado","itemNuevo":"${nuevo}"}`);
             }else{
+                logger.error("productosApi: No se creo el producto");
                 res.send(`{"mensajeError":"No se creo el producto"}`);
             }
           })();
     }else{
+        logger.error("productosApi: ruta / método POST no autorizada");
         res.send(`{ "error" : -1, "mensajeError": ruta / método POST no autorizada}`);
     }
 })
@@ -51,6 +54,7 @@ apiProductos.put('/:id',(req, res)=>{
             }
         })();
     }else{
+        logger.error("productosApi: ruta /id método PUT no autorizada");
         res.send(`{ "error" : -1, "mensajeError": "ruta /id método PUT no autorizada"}`);
     }
 })
@@ -64,6 +68,7 @@ apiProductos.delete('/:id',(req, res)=>{
                 if(result){
                     res.send(`{"mensajeExito":"Producto borrado"}`);
                 }else{
+                    logger.error("productosApi: El producto no se pudo borrar");
                     res.send(`{"mensajeError":"El producto no se pudo borrar"}`);
                 }
             }else{
@@ -71,6 +76,7 @@ apiProductos.delete('/:id',(req, res)=>{
             }
         })();
     }else{
+        logger.error("productosApi: ruta /id método DELETE no autorizada");
         res.send(`{ "error" : -1, "mensajeError": ruta /id método DELETE no autorizada}`);
     }
 })
