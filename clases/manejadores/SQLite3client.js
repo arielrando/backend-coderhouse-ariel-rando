@@ -54,6 +54,24 @@ module.exports = class SQLite3client {
                     })
                 }
             })
+
+            await knexAux.schema.hasTable('users').then(async function(exists) {
+                if (!exists) {
+                    await knexAux.schema.createTable('users', function(table){
+                        table.increments('id').primary();
+                        table.string('email',100).notNullable();
+                        table.string('password',200).notNullable();
+                        table.string('nombre',50).notNullable();
+                        table.string('apellido',50).notNullable();
+                        table.string('direccion',100).notNullable();
+                        table.integer('edad').notNullable();
+                        table.string('telefono',100).notNullable();
+                        table.string('foto').notNullable();
+                        table.datetime('fechaCreacion').defaultTo(knexAux.fn.now());
+                        table.datetime('fechaUltimoLogin').defaultTo(knexAux.fn.now());
+                    })
+                }
+            })
         }catch(err){
             console.log('No se pudo creat la tabla de productos: ',err);
         }

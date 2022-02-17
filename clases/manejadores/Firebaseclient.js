@@ -53,6 +53,33 @@ module.exports = class Firebaseclient {
         }
     }
 
+    async getCustom(arrayCustom, cantResultados = 0) {
+        try{
+            let doc = this.collection;
+            if(arrayCustom.length>0){
+                    for (let i = 0; i < arrayCustom.length; i++) {
+                        doc = doc.where(arrayCustom[i].fieldName,'==',arrayCustom[i].value)
+                    }
+            }
+            const snapshot = await doc.get();
+            let resultado = Array();
+            snapshot.forEach(doc => {
+                resultado.push({ id: doc.id, ...doc.data() })
+            })
+
+            if(isNaN(cantResultados)){
+                throw "The number of 'results searched' must be a valid number" ;
+            }
+            if(cantResultados>0){
+                resultado = resultado.slice(0, cantResultados);
+            }
+            return resultado;
+        }catch(err){
+            console.log('No se pudo buscar el dato de la tabla ',this.tabla,': ',err);
+            throw 'fatal error, check the logs'
+        }
+    }
+
     async getAll() {
         try{
             const snapshot = await this.collection.get();

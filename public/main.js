@@ -138,6 +138,21 @@ const borrarProdCarrito = (id) => {
       }
 }
 
+const finalizarCarrito = () =>{
+    fetch("/FinalizarCarrito", {method: "GET"})
+            .then(response => response.text())
+            .then(data => {
+                const json = JSON.parse(data);
+                if(json.status=='ok'){
+                    alert(`Compra completada!`);
+                    window.location.replace("/");
+                }else{
+                    console.log(json.msg);
+                    alert(`No se pudo completar la compra.`);
+                }
+            })
+}
+
 window.onload = function() {
     const formAgregarProductos = document.getElementById('agregarProductos');
     if(formAgregarProductos){
@@ -238,6 +253,7 @@ window.onload = function() {
                 alert('El campo contraseña no puede estar vacio!');
                 return null;
             }
+            
             formLogin.submit();
         })
     }
@@ -246,7 +262,7 @@ window.onload = function() {
     if(formRegistroUsuarioSubmit){
         formRegistroUsuarioSubmit.addEventListener('click', e =>{
             e.preventDefault();
-            if(!document.getElementById('unsernameRegistro').value || /^\s*$/.test(document.getElementById('unsernameRegistro').value)){
+            if(!document.getElementById('usernameRegistro').value || /^\s*$/.test(document.getElementById('usernameRegistro').value)){
                 alert('El E-mail no puede estar vacio!');
                 return null;
             }
@@ -258,9 +274,50 @@ window.onload = function() {
                 alert('Las contraseñas deben coincidir!');
                 return null;
             }
-            formRegistroUsuario.submit();
+            if(!document.getElementById('nombreRegistro').value || /^\s*$/.test(document.getElementById('nombreRegistro').value)){
+                alert('El Nombre no puede estar vacio!');
+                return null;
+            }
+            if(!document.getElementById('apellidoRegistro').value || /^\s*$/.test(document.getElementById('apellidoRegistro').value)){
+                alert('El apellido no puede estar vacio!');
+                return null;
+            }
+            if(!document.getElementById('direccionRegistro').value || /^\s*$/.test(document.getElementById('direccionRegistro').value)){
+                alert('La direccion no puede estar vacia!');
+                return null;
+            }
+            if(!document.getElementById('edadRegistro').value || /^\s*$/.test(document.getElementById('edadRegistro').value)){
+                alert('La edad no puede estar vacia!');
+                return null;
+            }
+            if(!document.getElementById('telefonoRegistro').value || /^\s*$/.test(document.getElementById('telefonoRegistro').value)){
+                alert('El Telefono no puede estar vacio!');
+                return null;
+            }
+            if(!document.getElementById('fotoRegistro').value || /^\s*$/.test(document.getElementById('fotoRegistro').value)){
+                alert('La foto de perfil no puede estar vacia!');
+                return null;
+            }
+            
+            const formData  = new FormData(formRegistroUsuario);
+            
+            fetch("/subirImagen/", {method: "POST",body: formData})
+            .then(response => response.text())
+            .then(data => {
+                const json = JSON.parse(data);
+                console.log(json);
+                if(json.status == 'ok'){
+                    document.getElementById("foto").value = json.image;
+                    formRegistroUsuario.submit();
+                }else{
+                    window.location.replace(`/users/falloRegistro?msg=${json.msg}`);
+                }
+                
+                
+            });
         })
     }
+
     const cajaChat = document.getElementById('chat-history');
     if(cajaChat){
         socket.emit('recuperarMensajes');

@@ -20,24 +20,14 @@ apiUsers.get('/registro', (req, res) => {
 
 apiUsers.get('/falloLogin', (req, res) => {
     res.render('falloLogin.hbs');
-    
 })
 
 apiUsers.get('/falloRegistro', (req, res) => {
     res.render('falloRegistro.hbs');
 })
 
-
 apiUsers.get('/exitoRegistro', (req, res) => {
     res.render('exitoRegistro.hbs');
-})
-
-apiUsers.get('/falloLogin',(req,res)=>{
-    console.log('falloLogin');
-})
-
-apiUsers.get('/falloRegistro',(req,res)=>{
-    console.log('falloRegistro');
 })
 
 module.exports = apiUsers;

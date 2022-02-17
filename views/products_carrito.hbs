@@ -39,6 +39,9 @@
         </table>
         <br>
         <a href="/" class="btn btn-dark btn-sm active" role="button" aria-pressed="true">Volver</a>
+        {{#if hayProductos}}
+        <button class="btn btn-primary btn-sm active" onclick="finalizarCarrito();" >Finalizar compra</button>
+        {{/if}}
     </div>
     <div class="col-sm-2"></div>
     

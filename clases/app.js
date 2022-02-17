@@ -3,6 +3,7 @@ const normalizr = require('normalizr');
 const normalize = normalizr.normalize;
 const schemaNormalizr = normalizr.schema;
 const path = require('path');
+const logger = require('./logger.js');
 
 const express = require('express');
 const session = require('express-session');
@@ -13,6 +14,7 @@ const { Server: HttpServer } = require('http');
 const { Server: IOServer } = require('socket.io');
 const passport = require('passport');
 require('./passport.js')(passport);
+
 
 const app = express();
 const httpServer = new HttpServer(app);
@@ -53,14 +55,13 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.post('/login',passport.authenticate('login', { failureRedirect: 'users/falloLogin' }),(req, res)=>{
-    //res.send(`{"mensajeExito":"usuario logueado","usuario":"${req.user}"}`);
+app.post('/login', passport.authenticate('login', { failureRedirect: '/users/falloLogin' }),(req, res)=>{
     res.redirect(`/`);
 });
 
-app.post('/registro', passport.authenticate('signup', { failureRedirect: 'users/falloRegistro' }),(req, res) => {
+app.post('/registro', passport.authenticate('signup', { failureRedirect: '/users/falloRegistro' }),(req, res)=>{
     res.redirect(`users/exitoRegistro`);
-})
+});
 
 io.on('connection', (socket) => { 
     socket.on('grabarMensaje', data => {
@@ -89,7 +90,7 @@ io.on('connection', (socket) => {
     })
   
     socket.on('notificacion', data => {
-      console.log(data);
+        logger.debug(data);
     })
 });
 

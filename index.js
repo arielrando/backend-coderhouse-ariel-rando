@@ -18,7 +18,7 @@ global.carritoId = null;
 
 const optionsArgv = {
     default: {
-        puerto: 8080,
+        puerto: process.env.PORT || 8080,
         modo: 'FORK'
     },
     alias: {
@@ -30,15 +30,15 @@ const optionsArgv = {
 const argumentos = argv(process.argv.slice(2),optionsArgv);
 
 if (cluster.isPrimary && argumentos.modo=='CLUSTER') {
-    console.log(numCPUs)
-    console.log(`PID MASTER ${process.pid}`)
+    logger.debug(numCPUs)
+    logger.debug(`PID MASTER ${process.pid}`)
 
     for (let i = 0; i < numCPUs; i++) {
         cluster.fork()
     }
 
     cluster.on('exit', worker => {
-        console.log('Worker', worker.process.pid, 'died', new Date().toLocaleString())
+        logger.debug('Worker', worker.process.pid, 'died', new Date().toLocaleString())
         cluster.fork()
     })
 }else {
@@ -52,7 +52,7 @@ if (cluster.isPrimary && argumentos.modo=='CLUSTER') {
     const {app, httpServer, io} = require('./clases/app.js');
 
     function myMiddleware (req, res, next) {
-        logger.info(`ruta ${req.url} método ${req.method}`);
+        logger.trace(`ruta ${req.url} método ${req.method}`);
         next()
      }
      
@@ -70,6 +70,6 @@ if (cluster.isPrimary && argumentos.modo=='CLUSTER') {
         res.send(`{ "error" : -1, "descripcion": "ruta ${req.url} método ${req.method} no existe"}`);
     });
 
-    httpServer.listen(argumentos.puerto, () => logger.info(`SERVER ON ${argumentos.puerto} - PID ${process.pid} - ${new Date().toLocaleString()}`)) // El servidor funcionando en el puerto 3000
+    httpServer.listen(argumentos.puerto, () => logger.trace(`SERVER ON ${argumentos.puerto} - PID ${process.pid} - ${new Date().toLocaleString()}`)) // El servidor funcionando en el puerto 3000
     httpServer.on('error', (err) =>logger.error(err));
 }

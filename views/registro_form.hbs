@@ -4,13 +4,26 @@
 <div class="row">
   <div class="col-sm-12 px-md-5">
       
-    <form id="registroUsuario" action="/registro" method="post">
-      <label for="unsernameRegistro">E-mail:</label><br>
-      <input class="form-control" type="text" id="unsernameRegistro" name="unsernameRegistro" ><br>
+    <form id="registroUsuario" action="/registro" method="post" >
+      <label for="usernameRegistro">E-mail:</label><br>
+      <input class="form-control" type="text" id="usernameRegistro" name="usernameRegistro" /><br>
       <label for="passwordRegistro">Contraseña:</label><br>
-      <input class="form-control" type="password" id="passwordRegistro" name="passwordRegistro" ><br>
+      <input class="form-control" type="password" id="passwordRegistro" name="passwordRegistro" /><br>
       <label for="repass">Re-ingrese su contraseña:</label><br>
-      <input class="form-control" type="password" id="repass" name="repass" ><br>
+      <input class="form-control" type="password" id="repass" name="repass" /><br>
+      <label for="nombreRegistro">Nombre:</label><br>
+      <input class="form-control" type="text" id="nombreRegistro" name="nombreRegistro" /><br>
+      <label for="apellidoRegistro">Apellido:</label><br>
+      <input class="form-control" type="text" id="apellidoRegistro" name="apellidoRegistro" /><br>
+      <label for="direccionRegistro">Direccion:</label><br>
+      <input class="form-control" type="text" id="direccionRegistro" name="direccionRegistro" /><br>
+      <label for="edadRegistro">Edad:</label><br>
+      <input class="form-control" type="number" id="edadRegistro" name="edadRegistro" /><br>
+      <label for="telefonoRegistro">Telefono:</label><br>
+      <input class="form-control" type="number" id="telefonoRegistro" name="telefonoRegistro" /><br>
+      <label for="fotoRegistro">Foto:</label><br>
+      <input class="form-control" type="file" id="fotoRegistro" name="fotoRegistro" /><br>
+      <input type="hidden" id="foto" name="foto" value=""/>
       <button class="btn btn-primary btn-sm active" name="registroUsuarioSubmit" id="registroUsuarioSubmit" value="S" type="submit">Crear</button>
     </form> 
     <br>

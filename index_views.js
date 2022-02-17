@@ -1,8 +1,10 @@
 const indexView = new Ruta();
 const producto = require('./clases/Productos.js');
 const carrito = require('./clases/Carrito.js');
+const uploadImage = require('./clases/UploadImage.js');
 const compression = require('compression');
-const { json } = require('express');
+const nodeMailer = require('./clases/nodemailer.js');
+require('dotenv').config();
 
 const prod = new producto();
 const carr = new carrito();
@@ -55,18 +57,41 @@ indexView.get('/carrito',(req, res) => {
       })();
 })
 
+indexView.get('/FinalizarCarrito',(req, res) => {
+    (async() => {
+        let carrito = await carr.getProductsById(carritoId);
+        let hayProductos = false;
+        if(carrito && carrito.length>0){
+            hayProductos = true;
+        }
+        if(!req.user){
+            res.send({status:'error',msg:'Usted no deberia estar aqui!'})
+        }
+        else if(!hayProductos){
+            res.send({status:'error',msg:'no hay productos en el carrito!'})
+        }else{
+            const objMailer = new nodeMailer(process.env.mail_origin,process.env.mail_pass,process.env.mail_port,process.env.mail_mode);
+            await objMailer.sendMailNewOrder(carrito,req.user);
+            await carr.deleteById(carritoId);
+            carritoId = null;
+            res.send({status:'ok'})
+        }
+      })();
+})
+
 indexView.get('/instrucciones_api',(req, res) => {
     res.render('instrucciones_api.hbs',{usuarioLogin: req.user});
 });
 
 indexView.get('/info',(req, res) => {
     const objJson = {argv:JSON.stringify(process.argv.slice(2)),ruta:process.cwd(),memory:JSON.stringify(process.memoryUsage()),process:process}
-    console.log(objJson);
     res.render('info.hbs',objJson);
 });
 
-indexView.get('/infoZip', compression(), (req, res) => {
-    res.render('info.hbs',{argv:JSON.stringify(process.argv.slice(2)),ruta:process.cwd(),memory:JSON.stringify(process.memoryUsage()),process:process});
-});
+indexView.post('/subirImagen',(req, res) => {
+    uploadImage.uploadImage(req, res,'fotoRegistro','public/profilePics',1,function(result) {
+        res.send(result);
+    });
+})
 
 module.exports = indexView;

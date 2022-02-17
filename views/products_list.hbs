@@ -1,8 +1,10 @@
 <input type="hidden" id="carritoId" value="{{carritoId}}"/>
+{{#if usuarioLogin}}
 <div class="row" style="height:50px;"><h2>Lista de productos{{#if test}} <span style="color: crimson; font-family: 'Comic Sans MS', cursive, sans-serif;">TEST</span> {{/if}}</h2></div>
 <div class="row">
     <div class="col-sm-2"></div>
     <div class="col-sm-8">
+        
         <table class="table table-dark" id="tablaProductos">
             {{#if hayProductos}}
             <thead>
@@ -71,6 +73,10 @@
     </div>
     <div class="col-sm-2"></div>
 </div>
+{{/if}}
+{{else}}
+<h3>Ingrese con su usuario y contraseña para poder comprar articulos, haga clic en el boton "Login" de la aprte superior</h3>
+<a class="btn btn-info btn-sm active" role="button" href="/instrucciones_api" >Instrucciones para usar las APIs</a>
 {{/if}}
 <div style="height:50px;">
     <h2>Caja de chat (Compresión:<span id='compresion_chat'>100</span>%)</h2>

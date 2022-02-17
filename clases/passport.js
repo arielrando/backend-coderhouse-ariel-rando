@@ -2,6 +2,8 @@ const bCrypt = require('bcrypt');
 const LocalStrategy = require('passport-local').Strategy;
 const usuarios = require('./Usuarios.js');
 const userObj = new usuarios();
+const nodeMailer = require('./nodemailer.js');
+require('dotenv').config();
 
 function isValidPassword(user, password) {
   return bCrypt.compareSync(password, user.password)
@@ -17,7 +19,7 @@ module.exports = function passportConfig(passport) {
     new LocalStrategy(
       {
         passReqToCallback: true,
-        usernameField:'unsernameRegistro',
+        usernameField:'usernameRegistro',
         passwordField:'passwordRegistro'
       },
       (req, email, pass, done) => {
@@ -26,26 +28,32 @@ module.exports = function passportConfig(passport) {
             let user = await userObj.getCustom([{fieldName: 'email', value: email}],1);
 
             if (user[0]) {
-              console.log('el usuario ya existe!')
-              return done(null, false)
+              throw "el usuario ya existe!";
             }
 
             let newUser = {
               email: email,
-              password: createHash(pass)
+              password: createHash(pass),
+              nombre: req.body.nombreRegistro,
+              apellido: req.body.apellidoRegistro,
+              direccion: req.body.direccionRegistro,
+              edad: req.body.edadRegistro,
+              telefono: req.body.telefonoRegistro,
+              foto: req.body.foto
             }
 
             let createdUser = await userObj.save(newUser);
 
             if(!createdUser){
               throw "error al crear el usuario";
+            }else{
+              const objMailer = new nodeMailer(process.env.mail_origin,process.env.mail_pass,process.env.mail_port,process.env.mail_mode);
+              await objMailer.sendMailNewRegistration(newUser);
+              return done(null, createdUser);
             }
-
-            return done(null, createdUser);
-
           } catch (err) {
             console.log('Error al hacer el registro: ' + err)
-            return done(err)
+            return done(null, false)
           }
           
         })();
