@@ -18,6 +18,7 @@ module.exports = class Usuario extends usuariosDao{
                     direccion: {type: String, required: true},
                     edad: {type: Number, required: true},
                     telefono: {type: String, required: true},
+                    telefonoInt: {type: String, required: true},
                     foto: {type: String, required: true},
                     fechaCreacion: {type: Date, default: Date.now},
                     fechaUltimoLogin: {type: Date, default: Date.now}

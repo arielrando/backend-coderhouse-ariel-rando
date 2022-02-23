@@ -322,4 +322,22 @@ window.onload = function() {
     if(cajaChat){
         socket.emit('recuperarMensajes');
     }
+
+    if(document.querySelector("#telefonoRegistro")){
+        const phoneInputField = document.querySelector("#telefonoRegistro");
+        const phoneInput = window.intlTelInput(phoneInputField, {
+            preferredCountries: ["ar"],
+            utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+        phoneInputField.addEventListener('change', e =>{
+            const info = document.querySelector(".alert-info");
+            const phoneNumber = phoneInput.getNumber();
+        
+            info.style.display = "";
+            info.innerHTML = `Su numero Internacional es: <strong>${phoneNumber}</strong>`;
+            document.getElementById("telefonoRegistroInt").value = phoneNumber.replace(/[-+()\s]/g, '');
+        })
+    }
   };

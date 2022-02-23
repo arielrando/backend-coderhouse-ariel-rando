@@ -39,6 +39,7 @@ module.exports = function passportConfig(passport) {
               direccion: req.body.direccionRegistro,
               edad: req.body.edadRegistro,
               telefono: req.body.telefonoRegistro,
+              telefonoInt: req.body.telefonoRegistroInt,
               foto: req.body.foto
             }
 

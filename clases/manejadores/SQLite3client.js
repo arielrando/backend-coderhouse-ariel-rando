@@ -66,6 +66,7 @@ module.exports = class SQLite3client {
                         table.string('direccion',100).notNullable();
                         table.integer('edad').notNullable();
                         table.string('telefono',100).notNullable();
+                        table.string('telefonoInt',100).notNullable();
                         table.string('foto').notNullable();
                         table.datetime('fechaCreacion').defaultTo(knexAux.fn.now());
                         table.datetime('fechaUltimoLogin').defaultTo(knexAux.fn.now());

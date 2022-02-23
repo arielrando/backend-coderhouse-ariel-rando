@@ -50,3 +50,7 @@ body{
     width: 90%;
     position: relative;
 }
+
+.iti--allow-dropdown{
+    color: #2f3138;
+}

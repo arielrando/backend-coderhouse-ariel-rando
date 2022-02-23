@@ -2,8 +2,8 @@ const indexView = new Ruta();
 const producto = require('./clases/Productos.js');
 const carrito = require('./clases/Carrito.js');
 const uploadImage = require('./clases/UploadImage.js');
-const compression = require('compression');
 const nodeMailer = require('./clases/nodemailer.js');
+const textMessage = require('./clases/Textmassage.js');
 require('dotenv').config();
 
 const prod = new producto();
@@ -72,6 +72,9 @@ indexView.get('/FinalizarCarrito',(req, res) => {
         }else{
             const objMailer = new nodeMailer(process.env.mail_origin,process.env.mail_pass,process.env.mail_port,process.env.mail_mode);
             await objMailer.sendMailNewOrder(carrito,req.user);
+            let objText = new textMessage(process.env.twilio_account_sid, process.env.twilio_auth_token );
+            await objText.sendWhatsapp(`nuevo pedido de ${req.user.email}`,process.env.admin_cellphone_whatsapp );
+            await objText.sendText(`Su pedido a sido registrado! gracias!`,req.user.telefonoInt );
             await carr.deleteById(carritoId);
             carritoId = null;
             res.send({status:'ok'})
