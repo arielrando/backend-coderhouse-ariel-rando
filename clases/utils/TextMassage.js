@@ -1,5 +1,5 @@
 const twilio = require('twilio');
-const logger = require('./logger.js');
+const logger = require('./Logger.js');
 require('dotenv').config();
 
 module.exports = class textMessage {

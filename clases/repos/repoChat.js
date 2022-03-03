@@ -1,9 +1,9 @@
 require('dotenv').config();
-const chatDao = require('./daos/chatDao.js');
+const chatDao = require('../daos/chatDao.js');
 
-module.exports = class Chat extends chatDao{
+module.exports = class repoChat extends chatDao{
     constructor(){
-        switch (process.env.DBdefault) {
+        switch (DBdefault) {
             case 'archivoTexto':
                 super('./DB/chats.txt');
             break;

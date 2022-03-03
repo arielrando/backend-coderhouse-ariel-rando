@@ -3,31 +3,38 @@ require('dotenv').config();
 const express = require('express');
 const cluster = require('cluster')
 const {Router} = express;
-const logger = require('./clases/logger.js');
-
-const {inicializarTablas} = require('./config.js');
-(async() => {
-    await inicializarTablas(process.env.DBdefault);
-})();
-
-const numCPUs = require('os').cpus().length
+const logger = require('./clases/utils/Logger.js');
 
 global.Ruta = Router;
 global.admin = true;
 global.carritoId = null;
+global.DBdefault = process.env.DBdefault;
 
 const optionsArgv = {
     default: {
         puerto: process.env.PORT || 8080,
-        modo: 'FORK'
+        modo: 'FORK',
+        database: ''
     },
     alias: {
         p: 'puerto',
-        m: 'modo'
+        m: 'modo',
+        d: 'database'
     }
 }
 
-const argumentos = argv(process.argv.slice(2),optionsArgv);
+const argumentos = argv(process.argv.slice(3),optionsArgv);
+
+if(argumentos.database){
+    DBdefault = argumentos.database;
+}
+
+const {inicializarTablas} = require('./config.js');
+(async() => {
+    await inicializarTablas(DBdefault);
+})();
+
+const numCPUs = require('os').cpus().length
 
 if (cluster.isPrimary && argumentos.modo=='CLUSTER') {
     logger.debug(numCPUs)

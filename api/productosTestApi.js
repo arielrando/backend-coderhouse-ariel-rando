@@ -1,5 +1,5 @@
 const apiProductosTest = new Ruta();
-const producto = require('../clases/productos.js');
+const producto = require('../clases/models/Products.js');
 const prod = new producto();
 
 apiProductosTest.get('/',(req, res)=>{

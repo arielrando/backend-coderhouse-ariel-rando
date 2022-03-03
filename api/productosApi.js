@@ -1,7 +1,7 @@
 const apiProductos = new Ruta();
-const producto = require('../clases/productos.js');
+const producto = require('../clases/models/Products.js');
 const prod = new producto();
-const logger = require('../clases/logger.js');
+const logger = require('../clases/utils/Logger.js');
 
 apiProductos.get('/',(req, res)=>{
     (async() => {

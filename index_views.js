@@ -1,9 +1,9 @@
 const indexView = new Ruta();
-const producto = require('./clases/Productos.js');
-const carrito = require('./clases/Carrito.js');
-const uploadImage = require('./clases/UploadImage.js');
-const nodeMailer = require('./clases/nodemailer.js');
-const textMessage = require('./clases/Textmassage.js');
+const producto = require('./clases/models/Products.js');
+const carrito = require('./clases/models/Cart.js');
+const uploadImage = require('./clases/utils/UploadImage.js');
+const nodeMailer = require('./clases/utils/Nodemailer.js');
+const textMessage = require('./clases/utils/TextMassage.js');
 require('dotenv').config();
 
 const prod = new producto();

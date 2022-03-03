@@ -1,7 +1,7 @@
 const multer = require('multer');
 const path = require("path");
 const { v4: uuidv4 } = require('uuid');
-const logger = require('./logger.js');
+const logger = require('./Logger.js');
 
 module.exports = class UploadImage {
     constructor(){

@@ -1,5 +1,5 @@
 const apiCarrito = new Ruta();
-const carrito = require('../clases/carrito.js');
+const carrito = require('../clases/models/Cart.js');
 const carrApi = new carrito();
 
 apiCarrito.post('/',(req, res)=>{

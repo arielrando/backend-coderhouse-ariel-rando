@@ -1,8 +1,8 @@
 const bCrypt = require('bcrypt');
 const LocalStrategy = require('passport-local').Strategy;
-const usuarios = require('./Usuarios.js');
+const usuarios = require('../models/Users.js');
 const userObj = new usuarios();
-const nodeMailer = require('./nodemailer.js');
+const nodeMailer = require('./Nodemailer.js');
 require('dotenv').config();
 
 function isValidPassword(user, password) {

@@ -7,9 +7,9 @@ module.exports = class ManejoArchivos{
         try{
             let vacio = true;
             const fs = require('fs');
-            const contenido = await fs.promises.readFile('./DB/Productos.txt', 'utf-8');
-            if(contenido){
-                let datos = JSON.parse(contenido);
+            if(fs.existsSync('./DB/Productos.txt')){
+            let fileProducts = await fs.promises.readFile('./DB/Productos.txt', 'utf-8');
+                let datos = JSON.parse(fileProducts);
                 if(datos.length>0){
                     vacio = false;
                 }
@@ -21,6 +21,15 @@ module.exports = class ManejoArchivos{
                     {id:3,codigo:"003",nombre:"Globo Terraqueo",fechaCreacion: Date(),fechaModificacion: Date(),descripcion:null,precio:345.67,stock:127,foto:"https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png"	}
                 ]);
                 await fs.promises.writeFile('./DB/Productos.txt', objeto);
+            }
+            if(!fs.existsSync('./DB/Users.txt')){
+                await fs.promises.writeFile('./DB/Users.txt', '');
+            }
+            if(!fs.existsSync('./DB/chats.txt')){
+                await fs.promises.writeFile('./DB/chats.txt', '');
+            }
+            if(!fs.existsSync('./DB/carritos.txt')){
+                await fs.promises.writeFile('./DB/carritos.txt', '');
             }
         }catch(err){
             console.log('error al leer el archivo error al tratar de inicializar las tablas: ',err);
@@ -99,6 +108,28 @@ module.exports = class ManejoArchivos{
             return result;
         }catch(err){
             console.log('No se encontro el dato ',num,' en el archivo',this.tabla,': ',err);
+        }
+    }
+    //userObj.getCustom([{fieldName: 'email', value: email}],1);
+    async getCustom(arrayCustom,quantity = 0){
+        try{
+            let test = await this.obtenerArchivoJson(this.tabla);
+            let result = [];
+            if(test){
+                arrayCustom.forEach(function (element, index) {
+                    test = test.filter(item => item[element.fieldName] == element.value);
+                });
+                result = test;
+                if(isNaN(quantity)){
+                    throw "The number of 'results searched' must be a valid number" ;
+                }
+                if(quantity>0){
+                    result = result.slice(0, quantity);
+                }
+            }
+            return result;
+        }catch(err){
+            console.log('No se encontro el dato ',JSON.stringify(arrayCustom),' en el archivo',this.tabla,': ',err);
         }
     }
 

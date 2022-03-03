@@ -2,24 +2,24 @@ require('dotenv').config();
 
 let chatDao;
 
-switch (process.env.DBdefault) {
+switch (DBdefault) {
     case 'archivoTexto':
-        chatDao =  require("../manejadores/ManejoArchivos.js");
+        chatDao =  require("../drivers/ManejoArchivos.js");
     break;
     case 'mysql':
-        chatDao =  require("../manejadores/ManejoArchivos.js");
+        chatDao =  require("../drivers/ManejoArchivos.js");
     break;
     case 'sqlite3':
-        chatDao =  require("../manejadores/ManejoArchivos.js");
+        chatDao =  require("../drivers/ManejoArchivos.js");
     break;
     case 'mongoDB':
-        chatDao = require("../manejadores/MongoDBclient.js");
+        chatDao = require("../drivers/MongoDBclient.js.js");
     break;
     case 'firebase':
-        chatDao = require("../manejadores/Firebaseclient.js");
+        chatDao = require("../drivers/Firebaseclient.js");
     break;
     default:
-        chatDao =  require("../manejadores/ManejoArchivos.js");
+        chatDao =  require("../drivers/ManejoArchivos.js");
     break;
 }
 

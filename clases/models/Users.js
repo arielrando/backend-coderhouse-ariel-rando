@@ -1,8 +1,8 @@
-const usuariosDao = require('./daos/usuariosDao.js');
+const usuariosDao = require('../daos/usuariosDao.js');
 
 module.exports = class Usuario extends usuariosDao{
     constructor(){
-        switch (process.env.DBdefault) {
+        switch (DBdefault) {
             case 'archivoTexto':
                 super('./DB/users.txt');
             break;

@@ -2,24 +2,24 @@ require('dotenv').config();
 
 let generalDao;
 
-switch (process.env.DBdefault) {
+switch (DBdefault) {
     case 'archivoTexto':
-        generalDao =  require("../manejadores/ManejoArchivos.js");
+        generalDao =  require("../drivers/ManejoArchivos.js");
     break;
     case 'mysql':
-        generalDao = require("../manejadores/MySQLclient.js");
+        generalDao = require("../drivers/MySQLclient.js");
     break;
     case 'sqlite3':
-        generalDao = require("../manejadores/SQLite3client.js");
+        generalDao = require("../drivers/SQLite3client.js");
     break;
     case 'mongoDB':
-        generalDao = require("../manejadores/MongoDBclient.js");
+        generalDao = require("../drivers/MongoDBclient.js.js");
     break;
     case 'firebase':
-        generalDao = require("../manejadores/Firebaseclient.js");
+        generalDao = require("../drivers/Firebaseclient.js");
     break;
     default:
-        generalDao =  require("../manejadores/ManejoArchivos.js");
+        generalDao =  require("../drivers/ManejoArchivos.js");
     break;
 }
 

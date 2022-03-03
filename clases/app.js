@@ -3,7 +3,7 @@ const normalizr = require('normalizr');
 const normalize = normalizr.normalize;
 const schemaNormalizr = normalizr.schema;
 const path = require('path');
-const logger = require('./logger.js');
+const logger = require('./utils/Logger.js');
 
 const express = require('express');
 const session = require('express-session');
@@ -13,7 +13,7 @@ const handlebars = require("express-handlebars");
 const { Server: HttpServer } = require('http');
 const { Server: IOServer } = require('socket.io');
 const passport = require('passport');
-require('./passport.js')(passport);
+require('./utils/Passport.js')(passport);
 
 
 const app = express();
@@ -23,9 +23,7 @@ const io = new IOServer(httpServer);
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-const objchat = require('./Chat.js');
-
-const chat = new objchat();
+const objchat = require('./models/Chat.js');
 
 app.use(express.static(path.join(__dirname,'../public')));
 
@@ -68,7 +66,8 @@ io.on('connection', (socket) => {
         (async() => {
             data = JSON.parse(data);
             data.fecha = Date();
-            await chat.save(data);
+            let chat = new objchat(data.mensaje, data.fecha, data.autor.mail, data.autor.nombre, data.autor.apellido, data.autor.edad, data.autor.alias, data.autor.avatar);
+            await chat.saveChat();
             let ahora = moment().format('DD/MM/YYYY HH:mm:ss');
             data.fecha = ahora;
             io.sockets.emit('mensajeNuevo', JSON.stringify(data));
@@ -77,6 +76,7 @@ io.on('connection', (socket) => {
 
     socket.on('recuperarMensajes',data  => {
         (async() => {
+            let chat = new objchat();
             let todos = await chat.getAll();
             if(todos.length>0){
                 const schemaAutor = new schemaNormalizr.Entity('autor',{},{idAttribute:'mail'});

@@ -2,24 +2,24 @@ require('dotenv').config();
 
 let usuariosDao;
 
-switch (process.env.DBdefault) {
+switch (DBdefault) {
     case 'archivoTexto':
-        usuariosDao =  require("../manejadores/ManejoArchivos.js");
+        usuariosDao =  require("../drivers/ManejoArchivos.js");
     break;
     case 'mysql':
-        usuariosDao = require("../manejadores/MySQLclient.js");
+        usuariosDao = require("../drivers/MySQLclient.js");
     break;
     case 'sqlite3':
-        usuariosDao = require("../manejadores/SQLite3client.js");
+        usuariosDao = require("../drivers/SQLite3client.js");
     break;
     case 'mongoDB':
-        usuariosDao = require("../manejadores/MongoDBclient.js");
+        usuariosDao = require("../drivers/MongoDBclient.js.js");
     break;
     case 'firebase':
-        usuariosDao = require("../manejadores/Firebaseclient.js");
+        usuariosDao = require("../drivers/Firebaseclient.js");
     break;
     default:
-        usuariosDao =  require("../manejadores/ManejoArchivos.js");
+        usuariosDao =  require("../drivers/ManejoArchivos.js");
     break;
 }
 

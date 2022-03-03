@@ -41,23 +41,23 @@ const optionsFirebase = {
   (async() => {
     switch (db) {
         case 'archivoTexto':
-            const ManejoArchivosclient = require('./clases/manejadores/ManejoArchivos.js');
+            const ManejoArchivosclient = require('./clases/drivers/ManejoArchivos.js');
             await ManejoArchivosclient.inicializarTablas();
         break;
         case 'mysql':
-            const MySQLclient = require('./clases/manejadores/MySQLclient.js');
+            const MySQLclient = require('./clases/drivers/MySQLclient.js');
             await MySQLclient.inicializarTablas();
         break;
         case 'sqlite3':
-            const SQLite3client = require('./clases/manejadores/SQLite3client.js');
+            const SQLite3client = require('./clases/drivers/SQLite3client.js');
             await SQLite3client.inicializarTablas();
         break;
         case 'mongoDB':
-            const MongoDBclient = require('./clases/manejadores/MongoDBclient.js');
+            const MongoDBclient = require('./clases/drivers/MongoDBclient.js.js');
             await MongoDBclient.inicializarTablas();
         break;
         case 'firebase':
-            const Firebaseclient = require('./clases/manejadores/Firebaseclient.js');
+            const Firebaseclient = require('./clases/drivers/Firebaseclient.js');
             await Firebaseclient.inicializarTablas();
         break;
     }
