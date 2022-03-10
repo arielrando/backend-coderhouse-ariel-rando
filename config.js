@@ -53,7 +53,7 @@ const optionsFirebase = {
             await SQLite3client.inicializarTablas();
         break;
         case 'mongoDB':
-            const MongoDBclient = require('./clases/drivers/MongoDBclient.js.js');
+            const MongoDBclient = require('./clases/drivers/MongoDBclient.js');
             await MongoDBclient.inicializarTablas();
         break;
         case 'firebase':

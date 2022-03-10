@@ -6,6 +6,12 @@ const path = require('path');
 const logger = require('./utils/Logger.js');
 
 const express = require('express');
+if(!global.DBdefault){
+    global.DBdefault = 'firebase';
+    const {Router} = express;
+    global.Ruta = Router;
+    global.admin = true;
+}
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
@@ -14,7 +20,6 @@ const { Server: HttpServer } = require('http');
 const { Server: IOServer } = require('socket.io');
 const passport = require('passport');
 require('./utils/Passport.js')(passport);
-
 
 const app = express();
 const httpServer = new HttpServer(app);
@@ -93,6 +98,14 @@ io.on('connection', (socket) => {
         logger.debug(data);
     })
 });
+
+const {productosApi,productoTestsApi,carritoApi,usersApi,testApi} = require('../api/index.js');
+
+app.use('/api/productos', productosApi);
+app.use('/api/productos-test', productoTestsApi);
+app.use('/api/carrito', carritoApi);
+app.use('/api/randoms', testApi);
+app.use('/users', usersApi);
 
 module.exports = {
     app,

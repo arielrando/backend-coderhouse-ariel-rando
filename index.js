@@ -49,11 +49,6 @@ if (cluster.isPrimary && argumentos.modo=='CLUSTER') {
         cluster.fork()
     })
 }else {
-    const productosApi = require('./api/productosApi.js');
-    const productoTestsApi = require('./api/productosTestApi.js');
-    const carritoApi = require('./api/carritoApi.js');
-    const usersApi = require('./api/usersApi.js');
-    const testApi = require('./api/testApi.js');
     const indexView = require('./index_views.js');
 
     const {app, httpServer, io} = require('./clases/app.js');
@@ -66,11 +61,6 @@ if (cluster.isPrimary && argumentos.modo=='CLUSTER') {
      app.use(myMiddleware)
 
     app.use('/',indexView);
-    app.use('/api/productos', productosApi);
-    app.use('/api/productos-test', productoTestsApi);
-    app.use('/api/carrito', carritoApi);
-    app.use('/api/randoms', testApi);
-    app.use('/users', usersApi);
 
     app.use((req, res, next) => {
         logger.warn(`ruta ${req.url} método ${req.method} no existe`);
